@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<#import "/common/common.html" as common>
+<html lang="zh">
+<head>
+    <@common.commonHead title="普通页面1"/>
+    <!-- 1. 先加载 jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- 2. 再加载对应的 Summernote 版本（以此处的 Bootstrap 4 为例） -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-bs4.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-bs4.min.js"></script>
+    <style>
+        /* ===== 选项卡样式定制 ===== */
+        /* 修改默认选项卡背景和文字颜色 */
+        .nav-tabs > li > a {
+            color: #555;                    /* 默认文字颜色 */
+            background: #f5f7fa;            /* 默认背景色 */
+            border: 1px solid #ddd;
+            border-bottom-color: transparent;
+            margin-right: 4px;
+            transition: all 0.3s ease;
+        }
+
+        /* 鼠标悬停效果 */
+        .nav-tabs > li > a:hover {
+            background: #e6f0ff;            /* 浅蓝色悬停背景 */
+            border-color: #b3d4fc;
+            color: #1890ff;
+        }
+
+        /* 选中状态：背景 #1890ff，文字白色 */
+        .nav-tabs > li.active > a,
+        .nav-tabs > li.active > a:hover,
+        .nav-tabs > li.active > a:focus {
+            background: #1890ff !important;  /* 选中背景色 */
+            color: #ffffff !important;       /* 选中文字白色 */
+            border: 1px solid #1890ff;
+            border-bottom-color: transparent;
+            font-weight: 500;
+        }
+
+        /* 选中状态下，图标颜色也变为白色 */
+        .nav-tabs > li.active > a i {
+            color: #ffffff !important;
+        }
+
+        /* 选项卡中的图标默认颜色 */
+        .nav-tabs > li > a i {
+            color: #1a7bb9;
+            margin-right: 5px;
+        }
+
+        /* ===== iframe 样式 ===== */
+        .tab-pane iframe {
+            width: 100%;
+            height: 650px;
+            border: none;
+            display: block;
+        }
+
+        .panel-body {
+            padding: 0;
+        }
+        .tab-pane {
+            background: #fff;
+        }
+
+        /* ===== 页面标题栏样式 ===== */
+        .page-header-bar {
+            padding: 10px 20px;
+            background: #f5f7fa;
+            border-bottom: 1px solid #e7eaec;
+            font-size: 14px;
+            color: #555;
+            display: flex;
+            align-items: center;
+        }
+        .page-header-bar i {
+            margin-right: 8px;
+            color: #1890ff;
+        }
+        .page-header-bar .badge {
+            margin-left: 10px;
+            background: #1890ff;
+            color: #fff;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        /* ===== 加载提示样式 ===== */
+        .iframe-loading-tip {
+            padding: 8px 20px;
+            background: #fffbe6;
+            border-bottom: 1px solid #ffe58f;
+            color: #ad8b00;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+        }
+        .iframe-loading-tip i {
+            margin-right: 8px;
+        }
+
+        /* ===== 确保选项卡容器正常显示 ===== */
+        .tabs-container .nav-tabs {
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* 修复 Bootstrap 默认样式覆盖 */
+        .nav-tabs > li.active > a,
+        .nav-tabs > li.active > a:focus {
+            background: #1890ff !important;
+            color: #ffffff !important;
+            border: 1px solid #1890ff !important;
+            border-bottom-color: transparent !important;
+        }
+
+        /* 选中状态下，a 标签内的所有文字和图标都是白色 */
+        .nav-tabs > li.active > a * {
+            color: #ffffff !important;
+        }
+    </style>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeIn">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a data-toggle="tab" href="#tab-1" aria-expanded="true">
+                            <i class="fa fa-align-center"></i>环境部署
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#tab-2" aria-expanded="false">
+                            <i class="fa fa-table"></i>创建用户或建表
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#tab-3" aria-expanded="false">
+                            <i class="fa fa-database"></i>oracle相关
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#tab-4" aria-expanded="false">
+                            <i class="fa fa-gear"></i>系统优化
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#tab-5" aria-expanded="false">
+                            <i class="fa fa-hand-stop-o"></i>问题或区划
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#tab-6" aria-expanded="false">
+                            <i class="fa fa-folder"></i>任务管理
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#tab-7" aria-expanded="false">
+                            <i class="fa fa-industry"></i>独立部署配置
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#tab-8" aria-expanded="false">
+                            <i class="fa fa-question-circle"></i>维护问题汇总
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#tab-9" aria-expanded="false">
+                            <i class="fa fa-plus-square"></i>其他医疗
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#tab-10" aria-expanded="false">
+                            <i class="fa fa-download"></i>工具下载
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#tab-11" aria-expanded="false">
+                            <i class="fa fa-check-circle"></i>上线检查
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#tab-12" aria-expanded="false">
+                            <i class="fa fa-laptop"></i>区划编码查询
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <!-- ========== 环境部署 ========== -->
+                    <div id="tab-1" class="tab-pane active">
+                        <div class="panel-body">
+                            <iframe src="/api/tool/environment" title="环境部署"></iframe>
+                        </div>
+                    </div>
+                    <!-- ========== 创建用户或建表 ========== -->
+
+                    <div id="tab-2" class="tab-pane">
+                        <div class="panel-body">
+                            <iframe src="/api/tool/tablespace" title="创建用户或建表"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- ========== oracle相关 ========== -->
+                    <div id="tab-3" class="tab-pane">
+                        <div class="panel-body">
+                            <iframe src="/api/tool/oracle" title="oracle相关"></iframe>
+                        </div>
+                    </div>
+                    <!-- ========== 系统优化 ========== -->
+                    <div id="tab-4" class="tab-pane">
+                        <div class="panel-body">
+                            <iframe src="/api/tool/xtyh" title="系统优化"></iframe>
+                        </div>
+                    </div>
+                    <!-- ========== 问题或区划 ========== -->
+                    <div id="tab-5" class="tab-pane">
+                        <div class="panel-body">
+                            <iframe src="/api/tool/wtqh" title="问题或区划"></iframe>
+                        </div>
+                    </div>
+                    <!-- ========== 任务管理 ========== -->
+                    <div id="tab-6" class="tab-pane">
+                        <div class="panel-body">
+                            <iframe src="/api/tool/rwgl" title="任务管理"></iframe>
+                        </div>
+                    </div>
+                    <!-- ========== 独立部署配置 ========== -->
+                    <div id="tab-7" class="tab-pane">
+                        <div class="panel-body">
+                            <iframe src="/api/tool/dlbspz" title="独立部署配置"></iframe>
+                        </div>
+                    </div>
+                    <!-- ========== 维护问题汇总 ========== -->
+                    <div id="tab-8" class="tab-pane">
+                        <div class="panel-body">
+                            <iframe src="/api/tool/whwthz" title="维护问题汇总"></iframe>
+                        </div>
+                    </div>
+                    <!-- ========== 其他医疗 ========== -->
+                    <div id="tab-9" class="tab-pane">
+                        <div class="panel-body">
+                            <iframe src="/api/tool/qtyl" title="其他医疗"></iframe>
+                        </div>
+                    </div>
+                    <!-- ========== 工具下载 ========== -->
+                    <div id="tab-10" class="tab-pane">
+                        <div class="panel-body">
+                            <iframe src="/api/tool/gjxz" title="工具下载"></iframe>
+                        </div>
+                    </div>
+                    <!-- ========== 上线检查 ========== -->
+                    <div id="tab-11" class="tab-pane">
+                        <div class="panel-body">
+                            <iframe src="/api/tool/sxjc" title="上线检查"></iframe>
+                        </div>
+                    </div>
+                    <!-- ========== 区划编码查询 ========== -->
+                    <div id="tab-12" class="tab-pane">
+                        <div class="panel-body">
+                            <iframe src="/api/tool/city-sjld" title="区划编码查询"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<@common.commonScripts/>
+<script>
+    $(document).ready(function(){
+        // 选项卡切换时，可选的 iframe 刷新逻辑
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href");
+            var iframe = $(target).find('iframe');
+            // 如果需要每次切换都刷新页面，取消下面注释
+            // iframe.attr('src', iframe.attr('src'));
+        });
+    });
+</script>
+</body>
+</html>

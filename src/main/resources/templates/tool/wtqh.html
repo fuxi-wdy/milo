@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<#import "/common/common.html" as common>
+<html lang="zh">
+<head>
+    <@common.commonHead title="问题区划"/>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <!-- ibox-title 固定顶部 -->
+                <!--<div class="ibox-title" id="fixedToolbar">
+                    <button id="edit" class="btn btn-primary btn-xs m-l-sm" onclick="edit()" type="button">编辑</button>
+                    <button id="save" class="btn btn-primary btn-xs" onclick="save()" type="button">保存</button>
+                </div>-->
+                <div class="ibox-content" id="eg">
+
+                    <div class="click2edit wrapper">
+                        <!-- 两列布局容器 -->
+                        <div class="two-column-wrapper">
+                            <!-- 左列 (变窄) -->
+                            <div class="col-left">
+                                <h3>---------挖矿处理----------------</h3>
+                                <p>文件(/etc/crontab和/var/spool/cron/root)不能被root权限修改与编辑</p>
+                                <pre>chattr -isa (文件路径)</pre>
+                                <pre>chattr -isa /etc/crontab</pre>
+                                <pre>chattr -isa /var/spool/cron/root</pre>
+                                <p>把这三个属性去除，可以对该文件进行修改</p>
+                                <h3>---------挖矿处理----------</h3>
+                                <pre>https://www.cnblogs.com/zhangjiahao/p/12634930.html</pre>
+                                <p>----------------------------------------------------------------</p>
+                                <pre>查看定时任务： crontab -l</pre>
+                                <pre> 删除定时任务：crontab -r</pre>
+
+                                <pre>查看进程：ps -aux|grep kinsing</pre>
+                                <pre>查看进程：ps -aux|grep kdevtmpfsi</pre>
+                                <pre>删除文件：rm -rf kdevtmpfsi</pre>
+                                <pre>删除文件：rm -rf /var/tmp/kinsing</pre>
+                                <pre>检查一次：find / -name kdevtmpfsi</pre>
+                                <pre>检查一次：find / -name kinsing</pre>
+
+                                <h3>定时任务：数据采集 （上传失败）</h3>
+                                <pre>解决：单位的边界IPS可能会拦截HTTP和FTP数据包，修改相关配置即可</pre>
+                                <h3>-----------端口通、无法上报、无法监制-------------------</h3>
+                                <pre>https://zhuanlan.zhihu.com/p/139537936?utm_id=0</pre>
+                                <pre>ping -s 1460 -M do baidu.com</pre>
+                                <pre>更改mtu【ifconfig eth0 1460】</pre>
+                                <h3>定时任务：一直等待执行中</h3>
+                                <pre>解决：进程阻塞，重启weblogic服务即可</pre>
+                                <h3>telnet不通</h3>
+                                <pre>路由增加规则 ip access-list extended 189     20 permit ip host 192.168.60.77 any</pre>
+                                <h3>---------------------------替换新包，清除weblogic缓存--------------</h3>
+                                <pre>停止weblogic服务</pre>
+                                <pre>进入目录：base_domain/servers/AdminServer</pre>
+                                <pre>执行：rm -rf cache logs tmp</pre>
+
+                                <h3>--------------------------------短信通知--------------------------------</h3>
+                                <pre>修改bosshome的配置文件bosssoft.properties增加一行</pre>
+                                <pre>yf_sms_url=http://139.199.11.188/yfsms/company/sms_sendsms.action</pre>
+                                <pre>修改sms.default.provider= 值为yf --->sms.default.provider=yf</pre>
+                                <h3>行业3034-07修改为2,  高校修改为 4</h3>
+                                <pre>UPDATE uaa_config SET FVALUE = '4' WHERE FKEY = 'INDUSTRY_NOTICE_TYPE'   (0不通知 2手机通知 4特殊通知)</pre>
+                                <h3>查看短信是否发送</h3>
+                                <pre>select  * from  ibe_notice_msg order by fcreate_time</pre>
+
+                                <h3>初始化method、version1.0.1报错   -----删除票据下发相关同步项</h3>
+                                <pre>delete from uaa_sync_item where ftype = 'billAutoAllot' or ftype = 'billAgenAutoAllot' or ftype = 'regionAutoAllot' OR ftype='initSet';</pre>
+                                <pre>commit;</pre>
+                                <h3>修改字段长度</h3>
+                                <pre>IBE_BUSDATA.FREMARK 改成VARCHAR2(255)</pre>
+                                <pre>IBE_BUSDATA_ITEM.FREMARK 改成VARCHAR2(200)</pre>
+                                <pre>ALTER TABLE IBE_BUSDATA MODIFY FREMARK VARCHAR2(255);</pre>
+                                <pre>ALTER TABLE IBE_BUSDATA_ITEM MODIFY FREMARK VARCHAR2(200);</pre>
+                                <h3>自定义fcustom长度</h3>
+                                <pre>une_cbill  ibe_busdata_disabled修改字段长度即可</pre>
+                                <h3>token变更key</h3>
+                                <pre>select * from ibb_college_bustype_appid   你可以把这个表的ftoken改成key</pre>
+                                <h3>--------------------库存有票，无法开具---------------------------------</h3>
+                                <pre>select * from ubr_stock_section for update</pre>
+                                <pre>select * from ubr_stock_pool</pre>
+
+                                <h3>--------------------------错加权限system------------------------------</h3>
+                                <pre>select * from AFA_AUTH_PARTY a,afa_role b where a.party_code = 'system' and a.role_code = b.role_code </pre>
+                                <p>删除多余即可</p>
+                                <h3>--------------------------签名服务器地址------------------------------</h3>
+                                <pre>ServerURL=http://202.61.91.26:16003/signserver/service/xml
+SCCZTDZPJ</pre>
+                                <h3>--------------------------开票明细表------------------------------</h3>
+                                <pre>导入、接口 ibe_busdata    ibe_busdata_item</pre>
+                                <pre>开票信息表 une_cbill    une_cbill_item</pre>
+                                <pre>传财政端 une_cbill_cloud</pre>
+                                <h3>强模式改弱模式</h3>
+                                <pre>delete uaa_pluck</pre>
+                                <h3>----------------系统损坏相关----------------------</h3>
+                                <pre>lsattr shiro-active%0053ession%0043ache.data -d</pre>
+                                <pre>chattr -i shiro-active%0053ession%0043ache.data</pre>
+                                <pre>chattr -a shiro-active%0053ession%0043ache.data</pre>
+                                <h3>电子票损坏查询</h3>
+                                <pre>select * from ibe_voucher_storage_detail t where t.fstorageid in (select z.fid from ibe_voucher_storage z where z.fbillbatchcode = '' and z.fbillno = '');</pre>
+                                <pre>select t.rowid,t.* from UAA_PENDING_EINVOICE t where t.c_bill_no in ('0019905187','0019905353');</pre>
+                                <pre>select*from une_cbill_cloud where fbid in (select fid from une_cbill where fbillno in ('0019905187','0019905353') and fbillbatchcode='51060120')</pre>
+                                <pre>update une_cbill_cloud set fversion = TICKET.NEXTVAL where fbid in (select fid from une_cbill where fbillno in ('0019905187','0019905353') and fbillbatchcode='51060120');</pre>
+                                <p>--24955546</p>
+                                <pre>select l.SESSION_ID,s.SERIAL#,l.LOCKED_MODE,l.ORACLE_USERNAME,s.MACHINE,s.TERMINAL,o.OBJECT_NAME,s.LOGON_TIME from v$locked_object l ,all_objects o,v$session s where l.OBJECT_ID=o.OBJECT_ID and l.SESSION_ID=s.SID order by sid,s.SERIAL#;</pre>
+                                <pre>alter system KILL session 84,39615</pre>
+                                <h3>--查看制票表--</h3>
+                                <pre>select*from une_cbill_cloud where fbid in (select fid from une_cbill where fbillno in ('0019904678','0019904834') and fbillbatchcode='51060120')</pre>
+                            </div>
+
+                            <!-- 右列 (变宽) -->
+                            <div class="col-right">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<@common.commonScripts />
+<script>
+    $(document).ready(function () {
+        $('.summernote').summernote({
+            lang: 'zh-CN'
+        });
+
+        // ===== 滚动时给固定栏添加阴影效果 =====
+        var $toolbar = $('.ibox-title');
+        var $window = $(window);
+        var offsetTop = $toolbar.offset().top;
+
+        $window.on('scroll', function() {
+            var scrollTop = $window.scrollTop();
+            if (scrollTop > offsetTop) {
+                $toolbar.addClass('scrolled');
+            } else {
+                $toolbar.removeClass('scrolled');
+            }
+        });
+
+        // ===== 窗口resize时重新计算偏移量 =====
+        $window.on('resize', function() {
+            offsetTop = $toolbar.offset().top;
+        });
+    });
+
+    var edit = function () {
+        $("#eg").addClass("no-padding");
+        $('.click2edit').summernote({
+            lang: 'zh-CN',
+            focus: true
+        });
+        // 编辑模式下，确保工具栏固定
+        setTimeout(function() {
+            $('.note-toolbar').css({
+                'position': 'sticky',
+                'top': '0',
+                'z-index': '1001',
+                'background': '#f7f9fa',
+                'border-bottom': '2px solid #e7eaec',
+                'box-shadow': '0 2px 8px rgba(0,0,0,0.08)'
+            });
+        }, 100);
+    };
+
+    var save = function () {
+        $("#eg").removeClass("no-padding");
+        var aHTML = $('.click2edit').summernote('code');
+        $('.click2edit').summernote('destroy');
+    };
+
+    (function() {
+        "use strict";
+
+        // ---------- 固定数据库格式 (与给定完全一致) ----------
+        const regionData = [
+            {
+                cityName: '广元市',
+                cityCode: '5108',
+                districts: [
+                    { name: '市本级', code: '510801' },
+                    { name: '利州区', code: '510802' },
+                    { name: '元坝/昭化', code: '510811' },
+                    { name: '朝天区', code: '510812' },
+                    { name: '旺苍县', code: '510821' },
+                    { name: '青川县', code: '510822' },
+                    { name: '剑阁县', code: '510823' },
+                    { name: '苍溪县', code: '510824' }
+                ]
+            },
+            {
+                cityName: '德阳市',
+                cityCode: '5106',
+                districts: [
+                    { name: '市本级', code: '510601' },
+                    { name: '广汉市', code: '510681' },
+                    { name: '什邡市', code: '510682' },
+                    { name: '绵竹', code: '510683' },
+                    { name: '旌阳', code: '510603' },
+                    { name: '罗江', code: '510626' },
+                    { name: '中江', code: '510623' },
+                    { name: '经开', code: '510604' },
+                    { name: '高新', code: '510605' }
+                ]
+            },
+            {
+                cityName: '绵阳市',
+                cityCode: '5107',
+                districts: [
+                    { name: '市本级', code: '510701' },
+                    { name: '涪城区', code: '510703' },
+                    { name: '游仙区', code: '510704' },
+                    { name: '三台县', code: '510722' },
+                    { name: '盐亭县', code: '510723' },
+                    { name: '安州区', code: '510724' },
+                    { name: '梓潼县', code: '510725' },
+                    { name: '仙海', code: '510794' },
+                    { name: '北川', code: '510726' },
+                    { name: '平武县', code: '510727' },
+                    { name: '江油市', code: '510781' },
+                    { name: '经开区', code: '510790' },
+                    { name: '高新区', code: '510791' },
+                    { name: '科学城', code: '510792' },
+                    { name: '科创园', code: '510793' }
+                ]
+            },
+            {
+                cityName: '广安市',
+                cityCode: '5116',
+                districts: [
+                    { name: '营山县', code: '511322' },
+                    { name: '仪陇县', code: '511324' },
+                    { name: '蓬安县', code: '511323' },
+                    { name: '华蓥市', code: '511681' },
+                    { name: '邻水县', code: '511623' },
+                    { name: '岳池县', code: '511621' },
+                    { name: '武胜县', code: '511622' }
+                ]
+            },
+            {
+                cityName: '巴中市',
+                cityCode: '5119',
+                districts: [
+                    { name: '通江县', code: '511921' },
+                    { name: '恩阳区', code: '511903' }
+                ]
+            },
+            {
+                cityName: '南充市',
+                cityCode: '5113',
+                districts: [
+                    { name: '高坪区', code: '511303' }
+                ]
+            },
+            {
+                cityName: '自贡市',
+                cityCode: '5103',
+                districts: [
+                    { name: '市本级', code: '510301' },
+                    { name: '大安区', code: '510304' },
+                    { name: '自流井', code: '510302' },
+                    { name: '贡井区', code: '510303' },
+                    { name: '沿滩区', code: '510311' },
+                    { name: '荣县', code: '510321' },
+                    { name: '富顺县', code: '510322' }
+                ]
+            },
+            {
+                cityName: '乐山市',
+                cityCode: '5111',
+                districts: [
+                    { name: '市本级', code: '511101' },
+                    { name: '市中区', code: '511102' },
+                    { name: '五通桥', code: '511112' },
+                    { name: '金口河', code: '511113' },
+                    { name: '峨眉山', code: '511181' },
+                    { name: '犍为', code: '511123' },
+                    { name: '井研', code: '511124' },
+                    { name: '沙湾', code: '511111' },
+                    { name: '夹江', code: '511126' },
+                    { name: '沐川县', code: '511129' },
+                    { name: '峨边', code: '511132' },
+                    { name: '马边', code: '511133' }
+                ]
+            }
+        ];
+
+        // ---------- DOM 引用 ----------
+        const tbody = document.getElementById('tableBody');
+        const cityCountSpan = document.getElementById('cityCount');
+        const districtTotalSpan = document.getElementById('districtTotal');
+        const refreshBtn = document.getElementById('refreshBtn');
+
+        // ---------- 渲染函数 (模拟 controller 请求后返回数据) ----------
+        function renderRegionData(data) {
+            if (!data || !Array.isArray(data) || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="empty-state">📭 暂无数据</td></tr>`;
+                cityCountSpan.textContent = '0';
+                districtTotalSpan.textContent = '0';
+                return;
+            }
+
+            // 计算区县总数
+            let totalDistricts = 0;
+            data.forEach(function(city) {
+                if (city.districts && Array.isArray(city.districts)) {
+                    totalDistricts += city.districts.length;
+                }
+            });
+
+            // 更新统计
+            cityCountSpan.textContent = data.length;
+            districtTotalSpan.textContent = totalDistricts;
+
+            // 构建表格行
+            let html = '';
+            for (let i = 0; i < data.length; i++) {
+                const city = data[i];
+                const cityName = city.cityName || '未知城市';
+                const cityCode = city.cityCode || '--';
+                const districts = city.districts || [];
+
+                // 构建区县标签
+                let districtHtml = '';
+                if (districts.length === 0) {
+                    districtHtml = '<span style="color: #94a3b8; font-size: 1.1rem;">— 无区县 —</span>';
+                } else {
+                    let tags = '';
+                    for (let j = 0; j < districts.length; j++) {
+                        const d = districts[j];
+                        const name = d.name || '未命名';
+                        const code = d.code || '';
+                        tags += '<span class="district-tag">' + name + ' <code>' + code + '</code></span>';
+                    }
+                    districtHtml = '<div class="district-list">' + tags + '</div>';
+                }
+
+                html += '<tr class="city-row">';
+                html += '<td><span style="font-family: monospace; background: #eef2f6; padding: 0.1rem 0.6rem; border-radius: 12px; font-size: 1.1rem;">' + cityCode + '</span></td>';
+                html += '<td><strong style="font-size: 1.2rem;">' + cityName + '</strong></td>';
+                html += '<td>' + districtHtml + '</td>';
+                html += '</tr>';
+            }
+
+            tbody.innerHTML = html;
+        }
+
+        // ---------- 模拟 controller 请求 (获得数据后渲染) ----------
+        function fetchDataAndRender() {
+            // 模拟请求延时
+            tbody.innerHTML = '<tr><td colspan="4" class="empty-state">⏳ 请求数据中……</td></tr>';
+
+            // 模拟网络/controller 延迟
+            setTimeout(function() {
+                // 深拷贝数据
+                const data = JSON.parse(JSON.stringify(regionData));
+                renderRegionData(data);
+            }, 320);
+        }
+
+        // ---------- 初始化加载 ----------
+        fetchDataAndRender();
+
+        // ---------- 刷新按钮 ----------
+        refreshBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            fetchDataAndRender();
+        });
+
+    })();
+</script>
+</body>
+</html>

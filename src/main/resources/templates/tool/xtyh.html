@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<#import "/common/common.html" as common>
+<html lang="zh">
+<head>
+    <@common.commonHead title="系统优化"/>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <!-- ibox-title 固定顶部 -->
+                <!--<div class="ibox-title" id="fixedToolbar">
+                    <button id="edit" class="btn btn-primary btn-xs m-l-sm" onclick="edit()" type="button">编辑</button>
+                    <button id="save" class="btn btn-primary btn-xs" onclick="save()" type="button">保存</button>
+                </div>-->
+                <div class="ibox-content" id="eg">
+
+                    <div class="click2edit wrapper">
+                        <!-- 两列布局容器 -->
+                        <div class="two-column-wrapper">
+                            <!-- 左列 -->
+                            <div class="col-left">
+                                <h3>【redis自定义IP清理缓存】</h3>
+                                <pre>./redis-cli -h ip -p 6379</pre>
+
+                                <h4>常用命令</h4>
+                                <pre>scp root@192.168.1.12:/home/test.txt /home/soft/</pre>
+
+                                <h3>【CPU个数】</h3>
+                                cat /proc/cpuinfo| grep "physical id"| sort| uniq| wc -l
+                                <h4>【单CPU核数】</h4>
+                                <pre>cat /proc/cpuinfo| grep "cpu cores"| uniq</pre>
+                                <h4>【CPU总核数】</h4>
+                                <pre>cat /proc/cpuinfo| grep "processor"| wc -l</pre>
+
+                                <h3>清除linux缓存</h3>
+                                <pre>sync && echo 1 > /proc/sys/vm/drop_caches
+sync && echo 2 > /proc/sys/vm/drop_caches
+sync && echo 3 > /proc/sys/vm/drop_caches</pre>
+
+                                <h3>查看当前文件夹下占用空间</h3>
+                                <pre>du -sh</pre>
+                                <h4>--------------------windows下plsql中文乱码----------------------------</h4>
+                                <h4>环境变量：NLS_LANG</h4>
+                                <pre>SIMPLIFIED CHINESE_CHINA.ZHS16GBK</pre>
+                                <h4>-----------------------------电子票乱码-------------------------------</h4>
+                                <pre>拷贝simsun.ttc 到 /usr/share/fonts
+执行mkfontscale【yum install mkfontscale】
+执行mkfontdir【yum install fontconfig】
+fc-cache -fv
+fc-list :lang=zh</pre>
+
+
+                                <h4>------------------------查看内存占用--------------------------</h4>
+                                <pre>ps -aux | sort -k4nr | head -n 10</pre>
+                                <h4>------------------------查看文件下目录大小-------------</h4>
+                                <pre>du -h -x --max-depth=1</pre>
+
+                                <h4>--------------------------增加路由--------------------------</h4>
+                                <h3>-----三台-----</h3>
+                                <pre>route add -net 1.255.255.0 netmask 255.255.255.0 gw 1.255.255.3
+
+vim /etc/sysconfig/network-script/route-eth0
+1.255.0.0/16 via 1.255.255.2</pre>
+
+
+                                <h3>------朝天人民------</h3>
+                                <pre>内网：172.16.161.150
+网关：172.16.161.254
+
+外网：172.16.168.13
+网关：172.16.168.1
+route add default gw 172.16.168.1
+route add -net 172.16.161.0 netmask 255.255.255.0 dev eth0</pre>
+                            </div>
+
+                            <!-- 右列 -->
+                            <div class="col-right">
+
+                                <h3>1.TCP连接相关参数</h3>
+                                <pre>vim /etc/sysctl.conf</pre>
+                                <h3>增加以下几行：</h3>
+                                <pre>net.ipv4.tcp_fin_timeout=300
+net.ipv4.tcp_keepalive_time=1200
+net.ipv4.tcp_syncookies=1
+net.ipv4.tcp_tw_reuse=1
+net.ipv4.tcp_tw_recycle=1
+net.ipv4.ip_local_port_range=32768 61000
+net.ipv4.tcp_max_tw_buckets=5000
+fs.epoll.max_user_instances=20480
+net.ipv4.tcp_max_syn_backlog=20480
+net.core.somaxconn=10240
+vm.swappiness=40
+vm.vfs_cache_pressure=200
+net.ipv4.ip_forward=1</pre>
+                                <h3>执行生效</h3>
+                                <pre>/sbin/sysctl -e -p /etc/sysctl.conf</pre>
+
+                                <h3>2.文件打开数修改</h3>
+                                <pre>vim /etc/security/limits.conf【注意看是否已经添加已经增加】</pre>
+                                <pre>* soft nofile 65535
+* hard nofile 65535</pre>
+                                <h3>【临时设置】</h3>
+                                <pre>ulimit -n 65535</pre>
+
+                                <h3>3.修改/etc/pam.d/login</h3>
+                                <pre># vim /etc/pam.d/login,在文本末尾加上：</pre>
+                                <pre>session    required    /lib64/security/pam_limits.so
+session    required    pam_limits.so</pre>
+
+                                <h3>3.数据库优化</h3>
+                                <h3>【调整/dev/shm大小】</h3>
+                                <pre>mount -o remount,size=6G /dev/shm</pre>
+                                <pre>/etc/fstab</pre>
+                                <pre>tmpfs /dev/shm tmpfs defaults,size=6G 0 0</pre>
+
+                                <h3>【修改SGA,PAG】10G</h3>
+                                <pre>alter system set sga_target=内存*0.8M scope=spfile;
+alter system set sga_max_size=内存*0.8M scope=spfile;
+
+alter system set pga_aggregate_target=内存*0.2M scope=spfile</pre>
+                                <h3>【修改连接数】</h3>
+                                <pre>alter system set processes=1000 scope=spfile;
+alter system set sessions=1105 scope=spfile;</pre>
+                                <h3>重启数据库</h3>
+                                <pre>shutdown immediate</pre>
+
+                                <h3>4.weblogic优化</h3>
+                                <h3>文件位置</h3>
+                                <pre>/middleware/user_projects/domains/base_domain/bin/setDomainEnv.sh
+_64BIT=-Xms3072m -Xmx5120m -Djava.awt.headless=true
+_32BIT=-Xms256 -Xmx512
+
+MEM_PERM_SIZE_64BIT=-XX:permSize=1024m
+MEM_MAX_PERM_SIZE_64BIT=-XX:MaxPermSize=1024</pre>
+
+                                <h3>文件位置</h3>
+                                <pre>/middleware/user_projects/domains/base_domain/bin/setDomainEnv.sh</pre>
+                                <h4>添加后如下所示：</h4>
+                                <pre>JAVA_OPTIONS 参数 -Djava.awt.headless=true -Dweblogic.threadpool.MinPoolSize=500 -Dweblogic.threadpool.MaxPoolSize=1200</pre>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<@common.commonScripts />
+<script>
+    $(document).ready(function () {
+        $('.summernote').summernote({
+            lang: 'zh-CN'
+        });
+
+        // ===== 滚动时给固定栏添加阴影效果 =====
+        var $toolbar = $('.ibox-title');
+        var $window = $(window);
+        var offsetTop = $toolbar.offset().top;
+
+        $window.on('scroll', function() {
+            var scrollTop = $window.scrollTop();
+            if (scrollTop > offsetTop) {
+                $toolbar.addClass('scrolled');
+            } else {
+                $toolbar.removeClass('scrolled');
+            }
+        });
+
+        // ===== 窗口resize时重新计算偏移量 =====
+        $window.on('resize', function() {
+            offsetTop = $toolbar.offset().top;
+        });
+    });
+
+    var edit = function () {
+        $("#eg").addClass("no-padding");
+        $('.click2edit').summernote({
+            lang: 'zh-CN',
+            focus: true
+        });
+        // 编辑模式下，确保工具栏固定
+        setTimeout(function() {
+            $('.note-toolbar').css({
+                'position': 'sticky',
+                'top': '0',
+                'z-index': '1001',
+                'background': '#f7f9fa',
+                'border-bottom': '2px solid #e7eaec',
+                'box-shadow': '0 2px 8px rgba(0,0,0,0.08)'
+            });
+        }, 100);
+    };
+
+    var save = function () {
+        $("#eg").removeClass("no-padding");
+        var aHTML = $('.click2edit').summernote('code');
+        $('.click2edit').summernote('destroy');
+    };
+</script>
+</body>
+</html>

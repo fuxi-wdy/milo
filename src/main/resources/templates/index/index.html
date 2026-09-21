@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html  lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <title>系统首页</title>
+    <!-- 避免IE使用兼容模式 -->
+ 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="favicon.ico" rel="shortcut icon"/>
+    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/css/jquery.contextMenu.min.css" rel="stylesheet"/>
+    <link href="/css/font-awesome.min.css" rel="stylesheet"/>
+    <link href="/css/animate.min.css" rel="stylesheet"/>
+    <link href="/css/style.min.css" rel="stylesheet"/>
+    <link href="/css/skins.css" rel="stylesheet"/>
+    <link href="/ruoyi/css/ry-ui.css" rel="stylesheet"/>
+    <style type="text/css">#noticeItems li a{transition:background .15s;border-radius:2px}#noticeItems li a:hover{background:#f7f9fb;text-decoration:none}#noticeItems li a:active{background:#eef2f7}#noticeItems li a:focus{background:transparent;outline:0}#noticeList .mark-all-read{font-size:12px;color:#5b9bd5;text-decoration:none;padding:2px 8px;border-radius:3px;transition:background 0.15s}#noticeList .mark-all-read:hover{background:#eef5fc;color:#2b7cc1}#noticeList .mark-all-read:active{background:#eef5fc;color:#2b7cc1}#noticeList .mark-all-read:focus{outline:none;background:transparent}
+</style>
+</head>
+<body class="fixed-sidebar full-height-layout gray-bg" classappend="" style="overflow: hidden">
+<div id="wrapper">
+
+    <!--左侧导航开始-->
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="nav-close">
+            <i class="fa fa-times-circle"></i>
+        </div>
+        <a href="javascript:;">
+            <li class="logo hidden-xs">
+                <span class="logo-lg">Milo管理系统</span>
+            </li>
+         </a>
+        <div class="sidebar-collapse">
+            <ul class="nav" id="side-menu">
+            	<li>
+            		<div class="user-panel">
+            			<a class="" title="个人中心" href="javascript:;">
+            				<div class="hide" text="个人中心"></div>
+					        <div class="pull-left image">
+		                    	<img src="/img/profile.jpg" class="img-circle" alt="User Image">
+					        </div>
+				        </a>
+				        <div class="pull-left info">
+				          <p>Milo</p>
+				          <!--<a href="javascript:;"><i class="fa fa-circle text-success"></i> 在线</a>
+				          <a href="javascript:;" style="padding-left:5px;"><i class="fa fa-sign-out text-danger"></i> 注销</a>-->
+				        </div>
+				    </div>
+            	</li>
+                <li>
+                    <a class="menuItem" href="/api/sy"><i class="fa fa-home"></i> <span class="nav-label">首页</span> </a>
+                </li>
+                <!--<li>
+                	<a class="" data-refresh="1">
+                		<i class="fa fa-bar-chart-o" class=""></i>
+                    	<span class="nav-label" text="">数据管理</span>
+                    	<span class="fa arrow"></span>
+                	</a>
+                    <ul class="nav nav-second-level collapse">
+						<li>
+							<a class="menuItem" text="" href="dataMeterIndex" data-refresh="">数据资料</a>
+
+						</li>
+					</ul>
+                </li>-->
+                <li>
+                    <a class="menuItem" href="" data-refresh="">
+                        <i class="fa fa-video-camera"></i>
+                        <span class="nav-label">维护管理</span>
+                        <span class="fa arrow"></span>
+                    </a>
+                    <ul class="nav nav-second-level collapse">
+                        <li>
+                            <a class="menuItem" text="" href="api/dataMeter/index" data-refresh="">数据资料</a>
+                        </li>
+                        <li>
+                            <a class="menuItem" text="" href="api/record/index" data-refresh="">维护记录</a>
+                        </li>
+                        <li>
+                            <a class="menuItem" text="" href="api/mb" data-refresh="">报表模板下载</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a class="menuItem" href="" data-refresh="">
+                        <i class="fa fa-bars"></i>
+                        <span class="nav-label">工具管理</span>
+                        <span class="fa arrow"></span>
+                    </a>
+                    <ul class="nav nav-second-level collapse">
+                        <li>
+                            <a class="menuItem" text="" href="api/tool/tool-gl" data-refresh="">资料管理</a>
+                        </li>
+                    </ul>
+                </li>
+
+				<!--<li>
+					<a class="" data-refresh="1">
+						<i class="fa fa-bar-chart-o" class=""></i>
+						<span class="nav-label" text="">用户管理</span>
+						<span class="fa arrow"></span>
+					</a>
+					<ul class="nav nav-second-level collapse">
+						<li>
+							<a class="menuItem" text="" href="javascript:void(0)" data-refresh="0">用户信息</a>
+
+						</li>
+					</ul>
+				</li>-->
+            </ul>
+        </div>
+    </nav>
+    <!--左侧导航结束-->
+
+    <!--右侧部分开始-->
+    <div id="page-wrapper" class="gray-bg dashbard-1">
+        <div class="row border-bottom">
+            <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                <div class="navbar-header">
+                    <a class="navbar-minimalize minimalize-styl-2" style="color:#FFF;" href="javascript:;" title="收起菜单">
+                    	<i class="fa fa-bars"></i>
+                    </a>
+                </div>
+                <ul class="nav navbar-top-links navbar-right welcome-message">
+                    <li class="dropdown user-menu">
+						<a href="javascript:void(0)" class="dropdown-toggle" data-hover="dropdown">
+							<img src="/img/profile.jpg" class="user-image">
+							<span class="hidden-xs">设置</span>
+						</a>
+						<ul class="dropdown-menu">
+							<!--<li class="mt5">
+								<a href="javascript:void(0)" class="menuItem noactive">
+								<i class="fa fa-user"></i> 个人中心</a>
+							</li>
+							<li>
+								<a onclick="resetPwd()">
+								<i class="fa fa-key"></i> 修改密码</a>
+							</li>
+							<li>
+								<a onclick="switchSkin()">
+								<i class="fa fa-dashboard"></i> 切换主题</a>
+							</li>
+							<li>
+								<a onclick="toggleMenu()">
+								<i class="fa fa-toggle-off"></i> 横向菜单</a>
+							</li>-->
+							<li class="divider"></li>
+							<li>
+								<a href="javascript:void(0)" onclick="tuichu()">
+								<i class="fa fa-sign-out"></i> 退出登录</a>
+							</li>
+						</ul>
+					</li>
+                </ul>
+            </nav>
+        </div>
+        <div class="row content-tabs" classappend="">
+            <button class="roll-nav roll-left tabLeft">
+                <i class="fa fa-backward"></i>
+            </button>
+            <nav class="page-tabs menuTabs">
+                <div class="page-tabs-content">
+                    <a href="javascript:;" class="menuTab" data-id="/api/sy">首页</a>
+                </div>
+            </nav>
+            <button class="roll-nav roll-right tabRight">
+                <i class="fa fa-forward"></i>
+            </button>
+            <a href="javascript:void(0);" class="roll-nav roll-right tabReload"><i class="fa fa-refresh"></i> 刷新</a>
+        </div>
+
+        <a id="ax_close_max" class="ax_close_max" href="javascript:;" title="关闭全屏"> <i class="fa fa-times-circle-o"></i> </a>
+
+        <div class="row mainContent" id="content-main" classappend="">
+            <iframe class="RuoYi_iframe" name="iframe0" width="100%" height="100%" data-id="/api/sy" frameborder="0" src="/api/sy" seamless></iframe>
+        </div>
+
+        <div class="footer">
+            <div class="pull-right">© 2026 Milo 版权所有 </div>
+        </div>
+    </div>
+    <!--右侧部分结束-->
+</div>
+<!-- 全局js -->
+<script type="text/javascript">
+    var ctx = "/";
+    /** 菜单锚点类型 hash/history */
+    var mode = "history";
+    /** 页签与菜单联动 */
+    var isLinkage = true;
+    /** 内容滚动到顶部 */
+    var isScrollToTop = false;
+</script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="/js/jquery.contextMenu.min.js"></script>
+<script src="/ajax/libs/blockUI/jquery.blockUI.js"></script>
+<script src="/ajax/libs/layer/layer.min.js"></script>
+<script src="/ruoyi/js/ry-ui.js"></script>
+<script src="/ruoyi/js/common.js"></script>
+<script src="/ruoyi/index.js"></script>
+<script src="/ajax/libs/fullscreen/jquery.fullscreen.js"></script>
+<script>
+
+function tuichu(){
+    $.get(ctx + 'login/logout', function(result) {
+        if (result.code == web_status.SUCCESS) {
+            window.location.href = ctx + "login";
+        }
+    })
+}
+
+// 默认激活页签（首页）
+function tabActive() {
+    var $mainTab = $('.menuTab[data-id="' + ctx + 'api/sy"]');
+    $mainTab.addClass('active');
+    // 懒加载：首次激活首页时才设置 src 并显示
+    var $mainIframe = $('.mainContent .RuoYi_iframe[data-id="' + ctx + 'api/sy"]');
+    if ($mainIframe.length) {
+        openToCurrentTab($mainIframe[0]);
+    }
+}
+
+$(function() {
+    var lockPath = storage.get('lockPath');
+    if($.common.equals("history", mode) && window.performance.navigation.type == 1) {
+        var url = storage.get('publicPath');
+        if ($.common.isNotEmpty(url)) {
+        } else {
+            tabActive();
+        }
+    } else if($.common.isNotEmpty(lockPath)) {
+        applyPath(lockPath);
+        storage.remove('lockPath');
+    } else {
+        var hash = location.hash;
+        if ($.common.isNotEmpty(hash)) {
+            var url = hash.substring(1, hash.length);
+            applyPath(url);
+        } else {
+            if($.common.equals("history", mode)) {
+                storage.set('publicPath', "");
+            }
+            tabActive();
+        }
+    } // <-- 这里缺少了这个闭合大括号
+});
+
+
+
+
+
+
+
+
+/* 切换主题 */
+function switchSkin() {
+    layer.open({
+		type : 2,
+		shadeClose : true,
+		title : "切换主题",
+		area : ["530px", "386px"],
+		content : [ctx + "system/switchSkin", 'no']
+	})
+}
+
+/* 切换菜单 */
+function toggleMenu() {
+	$.modal.confirm("确认要切换成横向菜单吗？", function() {
+		$.get(ctx + 'system/menuStyle/topnav', function(result) {
+            window.location.reload();
+	    });
+	})
+}
+
+
+
+
+</script>
+</body>
+</html>

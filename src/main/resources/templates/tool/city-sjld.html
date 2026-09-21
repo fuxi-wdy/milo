@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>省市区县 · 三级联动</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+        body {
+            background: #f2f7fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 24px 16px;
+        }
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 20px 40px -12px rgba(0, 20, 40, 0.25);
+            padding: 28px 24px 32px;
+            transition: 0.2s;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px 20px;
+            border-bottom: 2px solid #e6edf5;
+            padding-bottom: 18px;
+            margin-bottom: 22px;
+        }
+        .header h1 {
+            font-size: 1.9rem;
+            font-weight: 650;
+            color: #0b2b4a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header h1 small {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #3e5e7e;
+            background: #eef4fa;
+            padding: 4px 16px;
+            border-radius: 40px;
+        }
+        .filter-area {
+            display: flex;
+            align-items: center;
+            gap: 12px 16px;
+            flex-wrap: wrap;
+            background: #f5faff;
+            padding: 8px 20px 8px 20px;
+            border-radius: 60px;
+            border: 1px solid #dce6f0;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 6px 10px;
+            flex-wrap: wrap;
+            position: relative;
+        }
+        .filter-group label {
+            font-weight: 500;
+            color: #1f3f5c;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+        .search-select-wrapper {
+            position: relative;
+            min-width: 150px;
+            display: flex;
+            align-items: center;
+        }
+        .search-select-wrapper input {
+            padding: 7px 30px 7px 14px;
+            border-radius: 40px;
+            border: 1px solid #cbd8e8;
+            background: white;
+            font-size: 0.95rem;
+            color: #0b2b4a;
+            outline: none;
+            width: 100%;
+            min-width: 130px;
+            transition: 0.15s;
+            cursor: text;
+        }
+        .search-select-wrapper input:hover {
+            border-color: #8aa3c0;
+        }
+        .search-select-wrapper input:focus {
+            border-color: #1f6bb0;
+            box-shadow: 0 0 0 3px rgba(31, 107, 176, 0.15);
+        }
+        .search-select-wrapper input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f0f4fa;
+        }
+        .search-select-wrapper .clear-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: none;
+            background: #d0d9e6;
+            color: #4a5f7a;
+            font-size: 14px;
+            line-height: 20px;
+            text-align: center;
+            cursor: pointer;
+            display: none;
+            transition: 0.15s;
+            padding: 0;
+            font-weight: 600;
+        }
+        .search-select-wrapper .clear-btn:hover {
+            background: #b0c0d4;
+            color: #1a2f4a;
+        }
+        .search-select-wrapper .clear-btn.visible {
+            display: block;
+        }
+        .search-select-wrapper .clear-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .search-select-wrapper .dropdown-list {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #cbd8e8;
+            border-radius: 16px;
+            max-height: 220px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            padding: 6px 0;
+        }
+        .search-select-wrapper .dropdown-list.show {
+            display: block;
+        }
+        .search-select-wrapper .dropdown-list .option-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.92rem;
+            color: #1d334a;
+            transition: background 0.1s;
+        }
+        .search-select-wrapper .dropdown-list .option-item:hover {
+            background: #eaf1fa;
+        }
+        .search-select-wrapper .dropdown-list .option-item.active {
+            background: #d4e2f5;
+        }
+        .search-select-wrapper .dropdown-list .option-item.no-match {
+            color: #8a9db0;
+            cursor: default;
+            font-style: italic;
+        }
+        .search-select-wrapper .dropdown-list .option-item.no-match:hover {
+            background: transparent;
+        }
+        .reset-btn {
+            background: transparent;
+            border: 1px solid #cbd8e8;
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            color: #1f3f5c;
+            cursor: pointer;
+            transition: 0.15s;
+            background: white;
+            font-weight: 450;
+        }
+        .reset-btn:hover {
+            background: #eaf1fa;
+            border-color: #8aa3c0;
+        }
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: 18px;
+            border: 1px solid #e2eaf3;
+            background: white;
+            margin-top: 6px;
+        }
+        table {
+            width: 1200px;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            table-layout: fixed;
+        }
+        th {
+            background: #f0f6fd;
+            color: #1b3650;
+            font-weight: 600;
+            padding: 16px 14px;
+            text-align: left;
+            border-bottom: 2px solid #d3dfea;
+        }
+        td {
+            padding: 14px 14px;
+            border-bottom: 1px solid #e8eef6;
+            color: #1d334a;
+            vertical-align: middle;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .col-seq {
+            width: 70px;
+            text-align: center;
+            color: #4d627c;
+            font-weight: 500;
+            background: #fafdff;
+        }
+        .col-city {
+            width: 160px;
+            font-weight: 500;
+        }
+        .col-district {
+            width: 220px;
+        }
+        .col-code {
+            width: 180px;
+            font-family: 'SF Mono', 'JetBrains Mono', 'Fira Code', monospace;
+            letter-spacing: 0.2px;
+            color: #1f4a7a;
+            font-weight: 500;
+        }
+        .empty-row td {
+            text-align: center;
+            color: #6f8aa8;
+            padding: 40px 10px;
+            font-style: italic;
+        }
+        tbody tr:hover td {
+            background-color: #f4faff;
+        }
+        .footer-note {
+            margin-top: 22px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 18px;
+            font-size: 0.85rem;
+            color: #4f6885;
+            border-top: 1px solid #e3ebf3;
+            padding-top: 18px;
+            flex-wrap: wrap;
+        }
+        .footer-note span {
+            background: #f0f6fc;
+            padding: 4px 18px;
+            border-radius: 40px;
+        }
+        @media (max-width: 820px) {
+            .container {
+                padding: 18px 12px;
+            }
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            .filter-area {
+                padding: 10px 14px;
+                border-radius: 32px;
+                width: 100%;
+            }
+            .search-select-wrapper {
+                min-width: 100px;
+                flex: 1;
+            }
+            .search-select-wrapper input {
+                min-width: 80px;
+                padding-right: 28px;
+            }
+            table {
+                width: 100%;
+                min-width: 480px;
+            }
+            td, th {
+                padding: 11px 8px;
+                font-size: 0.88rem;
+            }
+            .col-seq {
+                width: 50px;
+            }
+            .col-city {
+                width: 120px;
+            }
+            .col-district {
+                width: 160px;
+            }
+            .col-code {
+                width: 130px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <div class="header">
+        <div class="filter-area">
+            <div class="filter-group">
+                <label for="provinceSelect">省</label>
+                <select id="provinceSelect">
+                    <option value="四川省">四川省</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>市</label>
+                <div class="search-select-wrapper" id="cityWrapper">
+                    <input type="text" id="cityInput" placeholder="输入搜索..." autocomplete="off" disabled />
+                    <button class="clear-btn" id="cityClearBtn" title="清除内容">×</button>
+                    <div class="dropdown-list" id="cityDropdown"></div>
+                </div>
+            </div>
+            <div class="filter-group">
+                <label>区县</label>
+                <div class="search-select-wrapper" id="districtWrapper">
+                    <input type="text" id="districtInput" placeholder="输入搜索..." autocomplete="off" disabled />
+                    <button class="clear-btn" id="districtClearBtn" title="清除内容">×</button>
+                    <div class="dropdown-list" id="districtDropdown"></div>
+                </div>
+            </div>
+            <button class="reset-btn" id="resetBtn">↺ 重置</button>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+            <tr>
+                <th class="col-seq">序号</th>
+                <th class="col-city">城市</th>
+                <th class="col-district">区县</th>
+                <th class="col-code">区划编码</th>
+            </tr>
+            </thead>
+            <tbody id="tableBody">
+            <tr class="empty-row"><td colspan="4">📍 请选择市、区县进行筛选</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="footer-note">
+        <span>🏷️ 共 <span id="totalCount">0</span> 个区县</span>
+    </div>
+</div>
+
+<script>
+    (function() {
+        'use strict';
+
+        // ------------------------------------------------------------
+        // 数据源：四川省全部区县
+        // ------------------------------------------------------------
+        var rawData = [
+            { province: '四川省', city: '成都市', district: '锦江区', code: '510104' },
+            { province: '四川省', city: '成都市', district: '青羊区', code: '510105' },
+            { province: '四川省', city: '成都市', district: '金牛区', code: '510106' },
+            { province: '四川省', city: '成都市', district: '武侯区', code: '510107' },
+            { province: '四川省', city: '成都市', district: '成华区', code: '510108' },
+            { province: '四川省', city: '成都市', district: '龙泉驿区', code: '510112' },
+            { province: '四川省', city: '成都市', district: '青白江区', code: '510113' },
+            { province: '四川省', city: '成都市', district: '新都区', code: '510114' },
+            { province: '四川省', city: '成都市', district: '温江区', code: '510115' },
+            { province: '四川省', city: '成都市', district: '双流区', code: '510116' },
+            { province: '四川省', city: '成都市', district: '郫都区', code: '510117' },
+            { province: '四川省', city: '成都市', district: '新津区', code: '510118' },
+            { province: '四川省', city: '成都市', district: '简阳市', code: '510185' },
+            { province: '四川省', city: '成都市', district: '都江堰市', code: '510181' },
+            { province: '四川省', city: '成都市', district: '彭州市', code: '510182' },
+            { province: '四川省', city: '成都市', district: '邛崃市', code: '510183' },
+            { province: '四川省', city: '成都市', district: '崇州市', code: '510184' },
+            { province: '四川省', city: '成都市', district: '金堂县', code: '510121' },
+            { province: '四川省', city: '成都市', district: '大邑县', code: '510129' },
+            { province: '四川省', city: '成都市', district: '蒲江县', code: '510131' },
+            { province: '四川省', city: '自贡市', district: '自流井区', code: '510302' },
+            { province: '四川省', city: '自贡市', district: '贡井区', code: '510303' },
+            { province: '四川省', city: '自贡市', district: '大安区', code: '510304' },
+            { province: '四川省', city: '自贡市', district: '沿滩区', code: '510311' },
+            { province: '四川省', city: '自贡市', district: '荣县', code: '510321' },
+            { province: '四川省', city: '自贡市', district: '富顺县', code: '510322' },
+            { province: '四川省', city: '攀枝花市', district: '东区', code: '510402' },
+            { province: '四川省', city: '攀枝花市', district: '西区', code: '510403' },
+            { province: '四川省', city: '攀枝花市', district: '仁和区', code: '510411' },
+            { province: '四川省', city: '攀枝花市', district: '米易县', code: '510421' },
+            { province: '四川省', city: '攀枝花市', district: '盐边县', code: '510422' },
+            { province: '四川省', city: '泸州市', district: '江阳区', code: '510502' },
+            { province: '四川省', city: '泸州市', district: '纳溪区', code: '510503' },
+            { province: '四川省', city: '泸州市', district: '龙马潭区', code: '510504' },
+            { province: '四川省', city: '泸州市', district: '泸县', code: '510521' },
+            { province: '四川省', city: '泸州市', district: '合江县', code: '510522' },
+            { province: '四川省', city: '泸州市', district: '叙永县', code: '510524' },
+            { province: '四川省', city: '泸州市', district: '古蔺县', code: '510525' },
+            { province: '四川省', city: '德阳市', district: '旌阳区', code: '510603' },
+            { province: '四川省', city: '德阳市', district: '罗江区', code: '510604' },
+            { province: '四川省', city: '德阳市', district: '广汉市', code: '510681' },
+            { province: '四川省', city: '德阳市', district: '什邡市', code: '510682' },
+            { province: '四川省', city: '德阳市', district: '绵竹市', code: '510683' },
+            { province: '四川省', city: '德阳市', district: '中江县', code: '510623' },
+            { province: '四川省', city: '绵阳市', district: '涪城区', code: '510703' },
+            { province: '四川省', city: '绵阳市', district: '游仙区', code: '510704' },
+            { province: '四川省', city: '绵阳市', district: '安州区', code: '510705' },
+            { province: '四川省', city: '绵阳市', district: '江油市', code: '510781' },
+            { province: '四川省', city: '绵阳市', district: '三台县', code: '510722' },
+            { province: '四川省', city: '绵阳市', district: '盐亭县', code: '510723' },
+            { province: '四川省', city: '绵阳市', district: '梓潼县', code: '510725' },
+            { province: '四川省', city: '绵阳市', district: '平武县', code: '510727' },
+            { province: '四川省', city: '绵阳市', district: '北川羌族自治县', code: '510726' },
+            { province: '四川省', city: '广元市', district: '利州区', code: '510802' },
+            { province: '四川省', city: '广元市', district: '昭化区', code: '510811' },
+            { province: '四川省', city: '广元市', district: '朝天区', code: '510812' },
+            { province: '四川省', city: '广元市', district: '旺苍县', code: '510821' },
+            { province: '四川省', city: '广元市', district: '青川县', code: '510822' },
+            { province: '四川省', city: '广元市', district: '剑阁县', code: '510823' },
+            { province: '四川省', city: '广元市', district: '苍溪县', code: '510824' },
+            { province: '四川省', city: '遂宁市', district: '船山区', code: '510903' },
+            { province: '四川省', city: '遂宁市', district: '安居区', code: '510904' },
+            { province: '四川省', city: '遂宁市', district: '射洪市', code: '510981' },
+            { province: '四川省', city: '遂宁市', district: '蓬溪县', code: '510921' },
+            { province: '四川省', city: '遂宁市', district: '大英县', code: '510923' },
+            { province: '四川省', city: '内江市', district: '市中区', code: '511002' },
+            { province: '四川省', city: '内江市', district: '东兴区', code: '511011' },
+            { province: '四川省', city: '内江市', district: '隆昌市', code: '511083' },
+            { province: '四川省', city: '内江市', district: '威远县', code: '511024' },
+            { province: '四川省', city: '内江市', district: '资中县', code: '511025' },
+            { province: '四川省', city: '乐山市', district: '市中区', code: '511102' },
+            { province: '四川省', city: '乐山市', district: '沙湾区', code: '511111' },
+            { province: '四川省', city: '乐山市', district: '五通桥区', code: '511112' },
+            { province: '四川省', city: '乐山市', district: '金口河区', code: '511113' },
+            { province: '四川省', city: '乐山市', district: '峨眉山市', code: '511181' },
+            { province: '四川省', city: '乐山市', district: '犍为县', code: '511123' },
+            { province: '四川省', city: '乐山市', district: '井研县', code: '511124' },
+            { province: '四川省', city: '乐山市', district: '夹江县', code: '511126' },
+            { province: '四川省', city: '乐山市', district: '沐川县', code: '511129' },
+            { province: '四川省', city: '乐山市', district: '峨边彝族自治县', code: '511132' },
+            { province: '四川省', city: '乐山市', district: '马边彝族自治县', code: '511133' },
+            { province: '四川省', city: '南充市', district: '顺庆区', code: '511302' },
+            { province: '四川省', city: '南充市', district: '高坪区', code: '511303' },
+            { province: '四川省', city: '南充市', district: '嘉陵区', code: '511304' },
+            { province: '四川省', city: '南充市', district: '阆中市', code: '511381' },
+            { province: '四川省', city: '南充市', district: '南部县', code: '511321' },
+            { province: '四川省', city: '南充市', district: '营山县', code: '511322' },
+            { province: '四川省', city: '南充市', district: '蓬安县', code: '511323' },
+            { province: '四川省', city: '南充市', district: '仪陇县', code: '511324' },
+            { province: '四川省', city: '南充市', district: '西充县', code: '511325' },
+            { province: '四川省', city: '眉山市', district: '东坡区', code: '511402' },
+            { province: '四川省', city: '眉山市', district: '彭山区', code: '511403' },
+            { province: '四川省', city: '眉山市', district: '仁寿县', code: '511421' },
+            { province: '四川省', city: '眉山市', district: '洪雅县', code: '511423' },
+            { province: '四川省', city: '眉山市', district: '丹棱县', code: '511424' },
+            { province: '四川省', city: '眉山市', district: '青神县', code: '511425' },
+            { province: '四川省', city: '宜宾市', district: '翠屏区', code: '511502' },
+            { province: '四川省', city: '宜宾市', district: '南溪区', code: '511503' },
+            { province: '四川省', city: '宜宾市', district: '叙州区', code: '511504' },
+            { province: '四川省', city: '宜宾市', district: '江安县', code: '511523' },
+            { province: '四川省', city: '宜宾市', district: '长宁县', code: '511524' },
+            { province: '四川省', city: '宜宾市', district: '高县', code: '511525' },
+            { province: '四川省', city: '宜宾市', district: '珙县', code: '511526' },
+            { province: '四川省', city: '宜宾市', district: '筠连县', code: '511527' },
+            { province: '四川省', city: '宜宾市', district: '兴文县', code: '511528' },
+            { province: '四川省', city: '宜宾市', district: '屏山县', code: '511529' },
+            { province: '四川省', city: '广安市', district: '广安区', code: '511602' },
+            { province: '四川省', city: '广安市', district: '前锋区', code: '511603' },
+            { province: '四川省', city: '广安市', district: '华蓥市', code: '511681' },
+            { province: '四川省', city: '广安市', district: '岳池县', code: '511621' },
+            { province: '四川省', city: '广安市', district: '武胜县', code: '511622' },
+            { province: '四川省', city: '广安市', district: '邻水县', code: '511623' },
+            { province: '四川省', city: '达州市', district: '通川区', code: '511702' },
+            { province: '四川省', city: '达州市', district: '达川区', code: '511703' },
+            { province: '四川省', city: '达州市', district: '万源市', code: '511781' },
+            { province: '四川省', city: '达州市', district: '宣汉县', code: '511722' },
+            { province: '四川省', city: '达州市', district: '开江县', code: '511723' },
+            { province: '四川省', city: '达州市', district: '大竹县', code: '511724' },
+            { province: '四川省', city: '达州市', district: '渠县', code: '511725' },
+            { province: '四川省', city: '雅安市', district: '雨城区', code: '511802' },
+            { province: '四川省', city: '雅安市', district: '名山区', code: '511803' },
+            { province: '四川省', city: '雅安市', district: '荥经县', code: '511822' },
+            { province: '四川省', city: '雅安市', district: '汉源县', code: '511823' },
+            { province: '四川省', city: '雅安市', district: '石棉县', code: '511824' },
+            { province: '四川省', city: '雅安市', district: '天全县', code: '511825' },
+            { province: '四川省', city: '雅安市', district: '芦山县', code: '511826' },
+            { province: '四川省', city: '雅安市', district: '宝兴县', code: '511827' },
+            { province: '四川省', city: '巴中市', district: '巴州区', code: '511902' },
+            { province: '四川省', city: '巴中市', district: '恩阳区', code: '511903' },
+            { province: '四川省', city: '巴中市', district: '通江县', code: '511921' },
+            { province: '四川省', city: '巴中市', district: '南江县', code: '511922' },
+            { province: '四川省', city: '巴中市', district: '平昌县', code: '511923' },
+            { province: '四川省', city: '资阳市', district: '雁江区', code: '512002' },
+            { province: '四川省', city: '资阳市', district: '安岳县', code: '512021' },
+            { province: '四川省', city: '资阳市', district: '乐至县', code: '512022' },
+            { province: '四川省', city: '阿坝州', district: '马尔康市', code: '513201' },
+            { province: '四川省', city: '阿坝州', district: '汶川县', code: '513221' },
+            { province: '四川省', city: '阿坝州', district: '理县', code: '513222' },
+            { province: '四川省', city: '阿坝州', district: '茂县', code: '513223' },
+            { province: '四川省', city: '阿坝州', district: '松潘县', code: '513224' },
+            { province: '四川省', city: '阿坝州', district: '九寨沟县', code: '513225' },
+            { province: '四川省', city: '阿坝州', district: '金川县', code: '513226' },
+            { province: '四川省', city: '阿坝州', district: '小金县', code: '513227' },
+            { province: '四川省', city: '阿坝州', district: '黑水县', code: '513228' },
+            { province: '四川省', city: '阿坝州', district: '壤塘县', code: '513230' },
+            { province: '四川省', city: '阿坝州', district: '阿坝县', code: '513231' },
+            { province: '四川省', city: '阿坝州', district: '若尔盖县', code: '513232' },
+            { province: '四川省', city: '阿坝州', district: '红原县', code: '513233' },
+            { province: '四川省', city: '甘孜州', district: '康定市', code: '513301' },
+            { province: '四川省', city: '甘孜州', district: '泸定县', code: '513322' },
+            { province: '四川省', city: '甘孜州', district: '丹巴县', code: '513323' },
+            { province: '四川省', city: '甘孜州', district: '九龙县', code: '513324' },
+            { province: '四川省', city: '甘孜州', district: '雅江县', code: '513325' },
+            { province: '四川省', city: '甘孜州', district: '道孚县', code: '513326' },
+            { province: '四川省', city: '甘孜州', district: '炉霍县', code: '513327' },
+            { province: '四川省', city: '甘孜州', district: '甘孜县', code: '513328' },
+            { province: '四川省', city: '甘孜州', district: '新龙县', code: '513329' },
+            { province: '四川省', city: '甘孜州', district: '德格县', code: '513330' },
+            { province: '四川省', city: '甘孜州', district: '白玉县', code: '513331' },
+            { province: '四川省', city: '甘孜州', district: '石渠县', code: '513332' },
+            { province: '四川省', city: '甘孜州', district: '色达县', code: '513333' },
+            { province: '四川省', city: '甘孜州', district: '理塘县', code: '513334' },
+            { province: '四川省', city: '甘孜州', district: '巴塘县', code: '513335' },
+            { province: '四川省', city: '甘孜州', district: '乡城县', code: '513336' },
+            { province: '四川省', city: '甘孜州', district: '稻城县', code: '513337' },
+            { province: '四川省', city: '甘孜州', district: '得荣县', code: '513338' },
+            { province: '四川省', city: '凉山州', district: '西昌市', code: '513401' },
+            { province: '四川省', city: '凉山州', district: '会理市', code: '513402' },
+            { province: '四川省', city: '凉山州', district: '木里藏族自治县', code: '513422' },
+            { province: '四川省', city: '凉山州', district: '盐源县', code: '513423' },
+            { province: '四川省', city: '凉山州', district: '德昌县', code: '513424' },
+            { province: '四川省', city: '凉山州', district: '会东县', code: '513426' },
+            { province: '四川省', city: '凉山州', district: '宁南县', code: '513427' },
+            { province: '四川省', city: '凉山州', district: '普格县', code: '513428' },
+            { province: '四川省', city: '凉山州', district: '布拖县', code: '513429' },
+            { province: '四川省', city: '凉山州', district: '金阳县', code: '513430' },
+            { province: '四川省', city: '凉山州', district: '昭觉县', code: '513431' },
+            { province: '四川省', city: '凉山州', district: '喜德县', code: '513432' },
+            { province: '四川省', city: '凉山州', district: '冕宁县', code: '513433' },
+            { province: '四川省', city: '凉山州', district: '越西县', code: '513434' },
+            { province: '四川省', city: '凉山州', district: '甘洛县', code: '513435' },
+            { province: '四川省', city: '凉山州', district: '美姑县', code: '513436' },
+            { province: '四川省', city: '凉山州', district: '雷波县', code: '513437' }
+        ];
+
+        // ------------------------------------------------------------
+        // DOM 引用
+        var provinceSelect = document.getElementById('provinceSelect');
+        var cityInput = document.getElementById('cityInput');
+        var cityDropdown = document.getElementById('cityDropdown');
+        var cityClearBtn = document.getElementById('cityClearBtn');
+        var districtInput = document.getElementById('districtInput');
+        var districtDropdown = document.getElementById('districtDropdown');
+        var districtClearBtn = document.getElementById('districtClearBtn');
+        var resetBtn = document.getElementById('resetBtn');
+        var tbody = document.getElementById('tableBody');
+        var totalSpan = document.getElementById('totalCount');
+
+        // 状态
+        var currentProvince = '四川省';
+        var currentCity = '';
+        var currentDistrict = '';
+
+        // 所有城市列表（缓存）
+        var allCities = [];
+        // 当前城市对应的区县列表（缓存）
+        var currentDistricts = [];
+
+        // ------------------------------------------------------------
+        // 工具函数
+        function getCities(province) {
+            var citySet = {};
+            var result = [];
+            rawData.forEach(function(item) {
+                if (item.province === province) {
+                    citySet[item.city] = true;
+                }
+            });
+            for (var key in citySet) {
+                if (citySet.hasOwnProperty(key)) {
+                    result.push(key);
+                }
+            }
+            return result;
+        }
+
+        function getDistricts(province, city) {
+            var result = [];
+            rawData.forEach(function(item) {
+                if (item.province === province && item.city === city) {
+                    result.push(item);
+                }
+            });
+            return result;
+        }
+
+        // ------------------------------------------------------------
+        // 清除按钮显示控制
+        function updateClearBtnVisibility(input, clearBtn) {
+            if (input.value && input.value.trim() !== '' && !input.disabled) {
+                clearBtn.classList.add('visible');
+            } else {
+                clearBtn.classList.remove('visible');
+            }
+        }
+
+        // ------------------------------------------------------------
+        // 渲染下拉选项
+        function renderCityDropdown(filterText) {
+            var keyword = filterText ? filterText.trim() : '';
+            var matched = allCities;
+            if (keyword) {
+                matched = allCities.filter(function(c) { return c.indexOf(keyword) !== -1; });
+            }
+
+            cityDropdown.innerHTML = '';
+            if (matched.length === 0) {
+                var div = document.createElement('div');
+                div.className = 'option-item no-match';
+                div.textContent = '无匹配城市';
+                cityDropdown.appendChild(div);
+            } else {
+                matched.forEach(function(city) {
+                    var div = document.createElement('div');
+                    div.className = 'option-item';
+                    div.textContent = city;
+                    div.setAttribute('data-value', city);
+                    div.addEventListener('click', function() {
+                        selectCity(city);
+                    });
+                    cityDropdown.appendChild(div);
+                });
+            }
+            cityDropdown.classList.add('show');
+        }
+
+        function renderDistrictDropdown(filterText) {
+            var keyword = filterText ? filterText.trim() : '';
+            var matched = currentDistricts;
+            if (keyword) {
+                matched = currentDistricts.filter(function(d) { return d.district.indexOf(keyword) !== -1; });
+            }
+
+            districtDropdown.innerHTML = '';
+            if (matched.length === 0) {
+                var div = document.createElement('div');
+                div.className = 'option-item no-match';
+                div.textContent = '无匹配区县';
+                districtDropdown.appendChild(div);
+            } else {
+                matched.forEach(function(item) {
+                    var div = document.createElement('div');
+                    div.className = 'option-item';
+                    div.textContent = item.district;
+                    div.setAttribute('data-value', item.district);
+                    div.addEventListener('click', function() {
+                        selectDistrict(item.district);
+                    });
+                    districtDropdown.appendChild(div);
+                });
+            }
+            districtDropdown.classList.add('show');
+        }
+
+        // ------------------------------------------------------------
+        // 选择城市
+        function selectCity(city) {
+            currentCity = city;
+            cityInput.value = city;
+            cityDropdown.classList.remove('show');
+            updateClearBtnVisibility(cityInput, cityClearBtn);
+
+            // 更新区县列表
+            currentDistricts = getDistricts(currentProvince, city);
+            currentDistrict = '';
+            districtInput.value = '';
+            districtInput.disabled = false;
+            updateClearBtnVisibility(districtInput, districtClearBtn);
+            renderDistrictDropdown('');
+
+            renderTable();
+        }
+
+        // ------------------------------------------------------------
+        // 选择区县
+        function selectDistrict(district) {
+            currentDistrict = district;
+            districtInput.value = district;
+            districtDropdown.classList.remove('show');
+            updateClearBtnVisibility(districtInput, districtClearBtn);
+            renderTable();
+        }
+
+        // ------------------------------------------------------------
+        // 清除城市
+        function clearCity() {
+            currentCity = '';
+            cityInput.value = '';
+            cityDropdown.classList.remove('show');
+            updateClearBtnVisibility(cityInput, cityClearBtn);
+            // 清空区县
+            currentDistricts = [];
+            currentDistrict = '';
+            districtInput.value = '';
+            districtInput.disabled = true;
+            updateClearBtnVisibility(districtInput, districtClearBtn);
+            districtDropdown.classList.remove('show');
+            renderTable();
+        }
+
+        // ------------------------------------------------------------
+        // 清除区县
+        function clearDistrict() {
+            currentDistrict = '';
+            districtInput.value = '';
+            districtDropdown.classList.remove('show');
+            updateClearBtnVisibility(districtInput, districtClearBtn);
+            renderTable();
+        }
+
+        // ------------------------------------------------------------
+        // 渲染表格（只有市选中时才显示数据）
+        function renderTable() {
+            var province = currentProvince;
+            var city = currentCity;
+            var district = currentDistrict;
+
+            var filtered = [];
+            if (province && city && district) {
+                filtered = rawData.filter(function(item) {
+                    return item.province === province && item.city === city && item.district === district;
+                });
+            } else if (province && city) {
+                filtered = rawData.filter(function(item) {
+                    return item.province === province && item.city === city;
+                });
+            } else {
+                filtered = [];
+            }
+
+            var html = '';
+            if (filtered.length === 0) {
+                html = '<tr class="empty-row"><td colspan="4">📍 请选择市、区县进行筛选</td></tr>';
+            } else {
+                filtered.forEach(function(item, index) {
+                    html += '<tr>' +
+                        '<td class="col-seq">' + (index + 1) + '</td>' +
+                        '<td class="col-city">' + item.city + '</td>' +
+                        '<td class="col-district">' + item.district + '</td>' +
+                        '<td class="col-code">' + item.code + '</td>' +
+                        '</tr>';
+                });
+            }
+            tbody.innerHTML = html;
+            totalSpan.textContent = filtered.length;
+        }
+
+        // ------------------------------------------------------------
+        // 清空城市和区县
+        function clearCityAndDistrict() {
+            currentCity = '';
+            cityInput.value = '';
+            cityInput.disabled = true;
+            updateClearBtnVisibility(cityInput, cityClearBtn);
+            currentDistricts = [];
+            currentDistrict = '';
+            districtInput.value = '';
+            districtInput.disabled = true;
+            updateClearBtnVisibility(districtInput, districtClearBtn);
+            districtDropdown.classList.remove('show');
+            cityDropdown.classList.remove('show');
+        }
+
+        // ------------------------------------------------------------
+        // 初始化城市列表（省默认选中，但市和区县为空）
+        function initCityList(province) {
+            currentProvince = province;
+            allCities = getCities(province);
+            cityInput.disabled = false;
+            cityInput.value = '';
+            currentCity = '';
+            updateClearBtnVisibility(cityInput, cityClearBtn);
+            currentDistricts = [];
+            currentDistrict = '';
+            districtInput.value = '';
+            districtInput.disabled = true;
+            updateClearBtnVisibility(districtInput, districtClearBtn);
+            cityDropdown.classList.remove('show');
+            districtDropdown.classList.remove('show');
+            renderTable();
+        }
+
+        // ------------------------------------------------------------
+        // 事件绑定：城市清除按钮
+        cityClearBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            clearCity();
+            cityInput.focus();
+        });
+
+        // ------------------------------------------------------------
+        // 事件绑定：区县清除按钮
+        districtClearBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            clearDistrict();
+            districtInput.focus();
+        });
+
+        // ------------------------------------------------------------
+        // 事件绑定：城市输入框
+        cityInput.addEventListener('input', function() {
+            var val = this.value;
+            updateClearBtnVisibility(this, cityClearBtn);
+            if (currentProvince) {
+                renderCityDropdown(val);
+            }
+        });
+
+        cityInput.addEventListener('focus', function() {
+            if (!cityInput.disabled && currentProvince) {
+                renderCityDropdown(this.value);
+            }
+        });
+
+        // 点击外部关闭下拉
+        document.addEventListener('click', function(e) {
+            var wrapper = document.getElementById('cityWrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                cityDropdown.classList.remove('show');
+            }
+            var wrapper2 = document.getElementById('districtWrapper');
+            if (wrapper2 && !wrapper2.contains(e.target)) {
+                districtDropdown.classList.remove('show');
+            }
+        });
+
+        // 城市键盘事件
+        cityInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                var val = this.value.trim();
+                if (val && allCities.indexOf(val) !== -1) {
+                    selectCity(val);
+                } else {
+                    var matched = allCities.filter(function(c) { return c.indexOf(val) !== -1; });
+                    if (matched.length > 0) {
+                        selectCity(matched[0]);
+                    }
+                }
+                e.preventDefault();
+            }
+            if (e.key === 'Escape') {
+                cityDropdown.classList.remove('show');
+                this.blur();
+            }
+        });
+
+        // ------------------------------------------------------------
+        // 事件绑定：区县输入框
+        districtInput.addEventListener('input', function() {
+            var val = this.value;
+            updateClearBtnVisibility(this, districtClearBtn);
+            if (currentProvince && currentCity) {
+                renderDistrictDropdown(val);
+            }
+        });
+
+        districtInput.addEventListener('focus', function() {
+            if (!districtInput.disabled && currentProvince && currentCity) {
+                renderDistrictDropdown(this.value);
+            }
+        });
+
+        districtInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                var val = this.value.trim();
+                if (val) {
+                    var matched = currentDistricts.filter(function(d) { return d.district.indexOf(val) !== -1; });
+                    if (matched.length > 0) {
+                        selectDistrict(matched[0].district);
+                    }
+                }
+                e.preventDefault();
+            }
+            if (e.key === 'Escape') {
+                districtDropdown.classList.remove('show');
+                this.blur();
+            }
+        });
+
+        // ------------------------------------------------------------
+        // 省份切换（目前只有四川省，但保留逻辑）
+        provinceSelect.addEventListener('change', function() {
+            var province = this.value;
+            currentProvince = province;
+
+            if (province) {
+                allCities = getCities(province);
+                cityInput.disabled = false;
+                cityInput.value = '';
+                currentCity = '';
+                updateClearBtnVisibility(cityInput, cityClearBtn);
+                currentDistricts = [];
+                currentDistrict = '';
+                districtInput.value = '';
+                districtInput.disabled = true;
+                updateClearBtnVisibility(districtInput, districtClearBtn);
+                districtDropdown.classList.remove('show');
+                renderTable();
+            } else {
+                allCities = [];
+                clearCityAndDistrict();
+                renderTable();
+            }
+            cityDropdown.classList.remove('show');
+            districtDropdown.classList.remove('show');
+        });
+
+        // ------------------------------------------------------------
+        // 重置按钮：清空市和区县，省保持不变（四川省）
+        resetBtn.addEventListener('click', function() {
+            provinceSelect.value = '四川省';
+            currentProvince = '四川省';
+            allCities = getCities('四川省');
+            clearCityAndDistrict();
+            cityInput.disabled = false;
+            updateClearBtnVisibility(cityInput, cityClearBtn);
+            cityDropdown.classList.remove('show');
+            districtDropdown.classList.remove('show');
+            renderTable();
+        });
+
+        // ------------------------------------------------------------
+        // 初始化：省默认选中四川省，市和区县为空
+        provinceSelect.value = '四川省';
+        currentProvince = '四川省';
+        allCities = getCities('四川省');
+        cityInput.disabled = false;
+        cityInput.value = '';
+        currentCity = '';
+        updateClearBtnVisibility(cityInput, cityClearBtn);
+        districtInput.disabled = true;
+        districtInput.value = '';
+        updateClearBtnVisibility(districtInput, districtClearBtn);
+        currentDistricts = [];
+        currentDistrict = '';
+        renderTable();
+
+        console.log('✅ 省市区三级联动已启动，省默认选中四川省，带清除按钮');
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<#import "/common/common.html" as common>
+<html lang="zh">
+<head>
+    <@common.commonHead title="oracle相关"/>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <!-- ibox-title 固定顶部 -->
+                <!--<div class="ibox-title" id="fixedToolbar">
+                    <button id="edit" class="btn btn-primary btn-xs m-l-sm" onclick="edit()" type="button">编辑</button>
+                    <button id="save" class="btn btn-primary btn-xs" onclick="save()" type="button">保存</button>
+                </div>-->
+                <div class="ibox-content" id="eg">
+
+                    <div class="click2edit wrapper">
+                        <!-- 两列布局容器 -->
+                        <div class="two-column-wrapper">
+                            <!-- 左列 -->
+                            <div class="col-left">
+                                <h3>------------查询2021年度已创建表空间路径和大小-------------------</h3>
+                                <pre>select file_name,maxbytes/1024/1024/1024  G from dba_data_files  where  file_name like '%2021%';</pre>
+                                <h3>------------路径/数据文件名，按表空间查询结果路径进行复制------</h3>
+
+                                <pre>alter database datafile '路径/数据文件名' autoextend on next 2G maxsize 31G;</pre>
+
+                                <h3>-----------------------------删除用户-------------------------------</h3>
+                                <pre>drop user user_name cascade;</pre>
+                                <h3>-----------------------------修改密码-------------------------------</h3>
+                                <pre>修改密码：alter user 用户名 identified by 密码;
+关闭数据库：【shutdown immediate;】
+监听器关闭、启动、状态：lsnrctl stop/start/status</pre>
+                                <h3>--------------------------数据库口令过期----------------------------</h3>
+                                <pre>SELECT * FROM dba_profiles WHERE profile='DEFAULT' AND resource_name='PASSWORD_LIFE_TIME'
+ ALTER PROFILE DEFAULT LIMIT PASSWORD_LIFE_TIME UNLIMITED;</pre>
+
+                                <h3>-----------------------------查询版本-------------------------------</h3>
+                                <pre>select* from v$version;</pre>
+                                <h3>----------------------------查看字符集------------------------------
+                                <pre>select * from nls_database_parameters</pre></h3>
+                                <h3>--------------------------杀用户进程----------------------------</h3>
+                                <pre>select sid,serial# from v$session where username='数据库用户';
+select 'alter system kill session '||''''||sid||''||','||''||serial#||''||''';' as killer from v$session where username='数据库用户';</pre>
+
+                                <h3>-----------------------------导出数据库-------------------------------</h3>
+                                <h3>优先清空几个日志表</h3>
+                                <h4>/*升级备份数据库前需手动清理数据库中的日志表*/</h4>
+                                <pre>truncate table nontax_sync_log;
+truncate table afa_op_log;
+truncate table AFA_SYS_LOGIN_LOG;
+truncate table IBE_VOUCHER_ARCHIVE;--2127及以上版本执行
+truncate table Fva_agencyArchiveLog;--3127以下版本执行
+truncate table BOS_QRTZ_TRIGGER_LOG;
+truncate table une_voucher;
+truncate table nontax_application_log;
+delete from ibe_notice_msg t where t.fstatus=1 and
+t.fcreate_time<=to_date((to_char(trunc(last_day(add_months(sysdate, -2))),'yyyy-mm-dd')||'
+00:00:00'), 'yyyy-mm-dd hh24:mi:ss');
+commit;
+delete from ibe_einvoice_error_data t where t.fstatus=1 and
+t.fcreate_time<=to_date((to_char(trunc(last_day(add_months(sysdate, -2))),'yyyy-mm-dd')||'
+00:00:00'), 'yyyy-mm-dd hh24:mi:ss');
+commit;</pre>
+                                <h3>--使用秒级制票单位</h3>
+                                <pre>delete from UAA_PENDING_EINVOICE where create_time to_timestamp((to_char(trunc(last_day(add_months(sysdate, -2))),'yyyy-mm-dd')||'00:00:00.0'), 'yyyy-mm-dd hh24:mi:ss.ff') and completed = 1;/*删除两个月前的秒级制票成功纪录*/
+commit;</pre>
+                                <h3>--未使用秒级制票单位</h3>
+                                <pre>delete from une_cbill_cloud where fcreatetime <
+to_date(to_char(trunc(last_day(add_months(sysdate, -2))),'yyyy-mm-dd hh24:mi:ss')，'yyyymm-dd hh24:mi:ss');
+/*删除两个月前的待制票记录*/
+commit;</pre>
+
+
+                                <pre>table_exists_action=append是为表增加数据；truncate是截断表，然后为其增加新数据；replace是删除已存在表，重新建表并追加数据</pre>
+                                <h3>全库导出</h3>
+                                <pre>expdp myhbj/myhbj@orcl directory=DATA_PUMP_DIR dumpfile=a.dmp PARALLEL=4 logfile=dmp.log schemas=myhbj</pre>
+
+                                <pre>expdp azwjj/azwjj@orcl directory=data_pump_dir dumpfile=a.dmp log=a.log  PARALLEL=4 EXCLUDE=TABLE:\"IN \(\'FVR_VOUCHERSUMMARY\',\'FVE_VOUCHERSTORAGE\',\'IBE_VOUCHER_STORAGE\',\'IBE_VOUCHER_STORAG E_DETAIL\'\)\" schemas=用户名</pre>
+
+                                <h3>后台导出</h3>
+                                <pre>nohup expdp 用户名/密码 directory=data_pump_dir dumpfile=0812.dmp logfile=0812.log schemas=用户名 PARALLEL=4 EXCLUDE=TABLE:\"IN \(\'FVR_VOUCHERSUMMARY\',\'FVE_VOUCHERSTORAGE\',\'IBE_VOUCHER_STORAGE\',\'IBE_VOUCHER_STORAG E_DETAIL\'\)\" >0812.log &</pre>
+
+                                <h3>-----------------------------导入数据库-------------------------------</h3>
+                                <pre>impdp mysdc/mysdc@orcl directory=DATA_PUMP_DIR dumpfile=a.dmp PARALLEL=4 logfile=dmp.log</pre>
+
+                                <h3>-------------------扩容表空间文件【旧】--------------------</h3>
+                                <pre>ALTER TABLESPACE FS_BASE_TBS
+ADD DATAFILE '/opt/oracle/app/oradata/orcl/FS_BASE_TBS_02.dbf'
+SIZE 1G
+AUTOEXTEND ON
+NEXT 2G
+MAXSIZE UNLIMITED;</pre>
+
+                                <h3>-------------------扩容表空间文件【新】--------------------</h3>
+                                <pre>CREATE TABLESPACE FS_BUSI_TBS_2024
+LOGGING
+DATAFILE '/opt/11g/oracle/oradata/orcl/FS_BUSI_TBS_2024.dbf'
+SIZE 1G
+AUTOEXTEND ON
+NEXT 1G MAXSIZE 31G
+EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;</pre>
+                                <h3>---------------------批量修改表--------------------</h3>
+                                <pre>select 'alter table ' || table_name || ' move tablespace FS_BASE_TBS;' from user_tables where tablespace_name='USERS';</pre>
+                                <h3>-----------------------索引失效更新------------------</h3>
+                                <pre>select * from user_indexes where table_owner='JYSWJJ' and status='UNUSABLE'</pre>
+                                <h3>-----------------------索引更新-----------------------</h3>
+                                <pre>alter index PK_IBE_DAILY_CHECK rebuild online;</pre>
+
+                                <h3>------------------查看表空间使用率-----------------</h3>
+                                <pre>SELECT Upper(F.TABLESPACE_NAME)         "表空间名",
+D.TOT_GROOTTE_MB                 "表空间大小(M)",
+D.TOT_GROOTTE_MB - F.TOTAL_BYTES "已使用空间(M)",
+To_char(Round(( D.TOT_GROOTTE_MB - F.TOTAL_BYTES ) / D.TOT_GROOTTE_MB * 100, 2), '990.99')
+|| '%'                           "使用比",
+F.TOTAL_BYTES                    "空闲空间(M)",
+F.MAX_BYTES                      "最大块(M)"
+FROM   (SELECT TABLESPACE_NAME,
+Round(Sum(BYTES) / ( 1024 * 1024 ), 2) TOTAL_BYTES,
+Round(Max(BYTES) / ( 1024 * 1024 ), 2) MAX_BYTES
+FROM   SYS.DBA_FREE_SPACE
+GROUP  BY TABLESPACE_NAME) F,
+(SELECT DD.TABLESPACE_NAME,
+Round(Sum(DD.BYTES) / ( 1024 * 1024 ), 2) TOT_GROOTTE_MB
+FROM   SYS.DBA_DATA_FILES DD
+GROUP  BY DD.TABLESPACE_NAME) D
+WHERE  D.TABLESPACE_NAME = F.TABLESPACE_NAME
+ORDER  BY 1</pre>
+
+                                <h3>--------------------逻辑块损坏-----------------</h3>
+                                <p>1.经检查坏块为逻辑坏块，位置在une_cbill_item的主键FID上的主键索引</p>
+
+                                <p>2.重建主键索引alter index  索引名 rebuild online;后业务正常，坏块变为free ,但并没有消除</p>
+
+                                <p>3.与客户协调停机时间，消除坏块步骤如下:</p>
+
+                                <p>删除主键索引drop index XXX</p>
+
+                                <p>重新resize缩小下索引所在表空间的数据文件大小 alter database  datafile 'XXX/XX.dbf' resize  xM;</p>
+
+                                <p>重新创建主键索引alter table XX add constraint pk_xx primary key(FID)</p>
+                            </div>
+
+                            <!-- 右列 -->
+                            <div class="col-right">
+
+                                <h3>定时任务</h3>
+                                <pre>crontab -e
+0 0 * * * su - oracle -c /home/dbbak/dbbak-tar.sh
+crontab -l</pre>
+
+                                <h3>---------------------锁表处理 1-----------------</h3>
+                                <h4>先查出被锁定的表</h4>
+                                <pre>select table_name from user_tab_statistics where stattype_locked is not null;
+处理
+begin
+dbms_stats.unlock_table_stats('数据库用户','表名');
+end;</pre>
+                                <h3>---------------------锁表处理 2-----------------</h3>
+                                <pre>SELECT l.session_id sid,
+s.serial#,
+l.locked_mode,
+l.oracle_username,
+l.os_user_name,
+s.machine,
+s.terminal,
+o.object_name,
+s.logon_time
+FROM v$locked_object l, all_objects o, v$session s
+WHERE l.object_id = o.object_id
+AND l.session_id = s.sid
+ORDER BY sid, s.serial#;</pre>
+                                <h3>杀掉进程：</h3>
+                                <pre>ALTER system KILL session 'sid,serial#';   ---修改sid与serial#</pre>
+
+                                <h3>----------------数据库定时任务备份-------------</h3>
+                                <pre>export ORACLE_BASE=/opt/data-oracle/app/oracle/product
+export ORACLE_HOME=$ORACLE_BASE/11.2.0/dbhome_1
+export ORACLE_SID=orcl
+export PATH=$ORACLE_HOME/bin:$PATH
+export DATA_DIR=/opt/data-oracle/app/admin/orcl/dpdump/
+export LOGS_DIR=/opt/data-oracle/app/admin/orcl/dpdump/
+export DELTIME=`date -d "10 days ago" +%Y%m%d`
+export BAKUPTIME=`date +%Y%m%d%H%M%S`
+export NLS_LANG=AMERICAN_AMERICA.ZHS16GBK
+echo "Starting bakup..."
+echo "Bakup file path $DATA_DIR/$BAKUPTIME.dmp"
+expdp scyz/scyz@172.16.16.73:1521/orcl dumpfile=scdzpj$BAKUPTIME.dmp log=scdzpj$BAKUPTIME.log directory=data_pump_dir
+echo "backup file success..."
+echo "tar the file bakup successfully. "
+tar -zcvPf $DATA_DIR/scdzpj$BAKUPTIME.tar.gz $DATA_DIR/scdzpj$BAKUPTIME.dmp $DATA_DIR/scdzpj$BAKUPTIME.log --remove-files
+
+echo "scp tar 172.16.16.73"
+echo "Delete the file bakup before $DELTIME ..."
+rm -rf $DATA_DIR/scdzpj$DELTIME*.gz
+echo "Bakup completed."</pre>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<@common.commonScripts />
+<script>
+    $(document).ready(function () {
+        $('.summernote').summernote({
+            lang: 'zh-CN'
+        });
+
+        // ===== 滚动时给固定栏添加阴影效果 =====
+        var $toolbar = $('.ibox-title');
+        var $window = $(window);
+        var offsetTop = $toolbar.offset().top;
+
+        $window.on('scroll', function() {
+            var scrollTop = $window.scrollTop();
+            if (scrollTop > offsetTop) {
+                $toolbar.addClass('scrolled');
+            } else {
+                $toolbar.removeClass('scrolled');
+            }
+        });
+
+        // ===== 窗口resize时重新计算偏移量 =====
+        $window.on('resize', function() {
+            offsetTop = $toolbar.offset().top;
+        });
+    });
+
+    var edit = function () {
+        $("#eg").addClass("no-padding");
+        $('.click2edit').summernote({
+            lang: 'zh-CN',
+            focus: true
+        });
+        // 编辑模式下，确保工具栏固定
+        setTimeout(function() {
+            $('.note-toolbar').css({
+                'position': 'sticky',
+                'top': '0',
+                'z-index': '1001',
+                'background': '#f7f9fa',
+                'border-bottom': '2px solid #e7eaec',
+                'box-shadow': '0 2px 8px rgba(0,0,0,0.08)'
+            });
+        }, 100);
+    };
+
+    var save = function () {
+        $("#eg").removeClass("no-padding");
+        var aHTML = $('.click2edit').summernote('code');
+        $('.click2edit').summernote('destroy');
+    };
+</script>
+</body>
+</html>

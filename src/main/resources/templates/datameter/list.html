@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+	<title>数据表管理</title>
+
+
+	<link href="/css/bootstrap.min.css" rel="stylesheet"/>
+	<link href="/css/font-awesome.min.css" rel="stylesheet"/>
+	<!-- bootstrap-table 表格插件样式 -->
+	<link href="/ajax/libs/bootstrap-table/bootstrap-table.min.css" rel="stylesheet"/>
+	<link  href="/css/animate.min.css" rel="stylesheet"/>
+	<link  href="/css/style.min.css" rel="stylesheet"/>
+	<link  href="/ruoyi/css/ry-ui.css" rel="stylesheet"/>
+	<link  href="/ruoyi/css/data-meter.css" rel="stylesheet"/>
+	<script  src="/js/jquery.min.js"></script>
+	<script  src="/js/bootstrap.min.js"></script>
+	<!-- bootstrap-table 表格插件 -->
+	<script  src="/ajax/libs/bootstrap-table/bootstrap-table.min.js"></script>
+	<script  src="/ajax/libs/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+	<script  src="/ajax/libs/bootstrap-table/extensions/mobile/bootstrap-table-mobile.js"></script>
+	<!-- jquery-validate 表单验证插件 -->
+	<script  src="/ajax/libs/validate/jquery.validate.min.js"></script>
+	<script  src="/ajax/libs/validate/jquery.validate.extend.js"></script>
+	<script  src="/ajax/libs/validate/messages_zh.js"></script>
+	<!-- bootstrap-table 表格树插件 -->
+	<script  src="/ajax/libs/bootstrap-table/extensions/tree/bootstrap-table-tree.min.js"></script>
+	<!-- 遮罩层 -->
+	<script  src="/ajax/libs/blockUI/jquery.blockUI.js"></script>
+	<script  src="/ajax/libs/iCheck/icheck.min.js"></script>
+	<script  src="/ajax/libs/layer/layer.min.js"></script>
+	<script  src="/ajax/libs/layui/layui.min.js"></script>
+	<script  src="/ruoyi/js/common.js"></script>
+	<script  src="/ruoyi/js/ry-ui.js"></script>
+	<script  src="/ruoyi/js/progress-export.js"></script>
+	<script  src="/ruoyi/js/data-meter.js"></script>
+	<script src="/ajax/libs/bootstrap-select/bootstrap-select.min.js"></script>
+	<script src="/ajax/libs/select2/select2.min.js"></script>
+
+	<!-- 单位名称模糊查询下拉样式 -->
+
+</head>
+<body class="gray-bg">
+<div class="container-div">
+	<div class="row">
+		<div class="col-sm-12 search-collapse">
+			<form id="config-form">
+				<div class="select-list">
+					<ul>
+						<li>
+							单位名称：
+							<div class="search-box" style="position: relative;">
+								<input class="form-control" type="text" id="searchKeyword"
+									   placeholder="输入单位名称关键词搜索"
+									   autocomplete="off" name="name">
+								<div class="dropdown-list" id="dropdown" style="display:none; position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #ccc; border-radius: 4px; max-height: 200px; overflow-y: auto; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.15);"></div>
+							</div>
+						</li>
+						<li>
+							地区类型：<select name="type" with="80px">
+							<option value="">所有</option>
+							<option text="" value=1 >绵阳</option>
+							<option text="" value=2 >德阳</option>
+							<option text="" value=3 >广元</option>
+							<option text="" value=4 >乐山</option>
+							<option text="" value=5 >自贡及其他</option>
+							<option text="" value=6 >宜宾</option>
+						</select>
+						</li>
+						<li>
+							负 责 人：<input type="text" name="concat"/>
+						</li>
+						<li>
+							<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+						</li>
+					</ul>
+				</div>
+			</form>
+		</div>
+
+		<div class="btn-group-sm" id="toolbar" role="group">
+			<a class="btn btn-success" onclick="$.operate.add()" >
+				<i class="fa fa-plus"></i> 新增
+			</a>
+			<a class="btn btn-primary single disabled" onclick="$.operate.edit()" >
+				<i class="fa fa-edit"></i> 修改
+			</a>
+			<!-- <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" >
+                 <i class="fa fa-remove"></i> 删除
+             </a>-->
+			<a class="btn btn-warning" onclick="exportExcelDataMeterPro()" >
+				<i class="fa fa-download"></i> 导出
+			</a>
+		</div>
+		<div class="col-sm-12 select-table table-striped">
+			<table id="bootstrap-table"></table>
+		</div>
+	</div>
+</div>
+
+<script>
+	var ctx = "/api";
+	var prefix = ctx + "/dataMeter";
+	$(function() {
+		var options = {
+			url: prefix + '/list',
+			createUrl: prefix + "/add",
+			updateUrl: prefix + "/edit?scId={id}",
+			removeUrl: prefix + "/remove?scId={id}",
+			exportUrl: prefix + "/export",
+			modalName: "数据资料表",
+			exportFileName: "数据资料表",
+			clickToSelect: true,
+			singleSelect: true,
+			columns: [{
+				checkbox: true
+			},
+				{
+					field: 'scId',
+					title: '项目序号'
+				},
+				{
+					field: 'name',
+					title: '单位名称'
+				},
+				{
+					field: 'type',
+					title: '地区类型',
+				},
+				{
+					field: 'fuWuQi',
+					title: '服务器资料',
+					align: 'center',
+					formatter: function(value, row, index) {
+						return $.table.tooltip(value, 10, "open");
+					}
+				},
+				{
+					field: 'sign',
+					title: '签名地址信息',
+					align: 'center',
+					formatter: function(value, row, index) {
+						return $.table.tooltip(value, 10, "open");
+					}
+				}
+				,
+				{
+					field: 'bsDate',
+					title: '部署日期'
+				},
+				{
+					field: 'sxDate',
+					title: '上线日期',
+					sortable: true
+				},
+				{
+					field: 'concat',
+					title: '负责人'
+				},
+				{
+					field: 'version',
+					title: '版本号'
+				},
+				{
+					field: 'remark',
+					title: '备注',
+					align: 'center'
+				}]
+		};
+		$.table.init(options);
+	});
+
+
+</script>
+<!-- 导出进度弹窗（异步导出 + WebSocket 实时进度） -->
+<div id="exportProgressModal" style="display:none; position:fixed; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:99999;">
+	<div id="exportProgressBox" style="position:absolute; left:50%; top:45%; transform:translate(-50%,-50%); width:550px; max-width:92%; background:#fff; border-radius:6px; padding:24px 28px; box-shadow:0 6px 24px rgba(0,0,0,.3);">
+		<div id="exportProgressTitleBar" style="position:relative; margin-bottom:6px; cursor:move; user-select:none;" title="按住此处可拖动窗口">
+			<div id="exportProgressTitle" style="font-size:16px; font-weight:bold; display:inline-block;">正在导出数据</div>
+			<button type="button" id="exportProgressClose" style="position:absolute; right:-14px; top:-22px; border:none; background:transparent; font-size:22px; line-height:1; color:#999; cursor:pointer; padding:6px 8px;">×</button>
+		</div>
+		<!--<div style="font-size:13px; color:#888; margin-bottom:16px;">导出期间请勿关闭页面，完成后请手动点击右上角 × 关闭</div>-->
+		<div class="progress" style="height:24px; margin-bottom:8px; background:#e9ecef; border-radius:4px; overflow:hidden;">
+			<div id="exportProgressBar" class="progress-bar progress-bar-striped active" role="progressbar" style="width:0%; height:100%; background:#337ab7; color:#fff; font-size:12px; line-height:24px; text-align:center;">0%</div>
+		</div>
+		<div id="exportProgressText" style="font-size:13px; color:#666;">准备中...</div>
+	</div>
+</div>
+</body>
+</html>

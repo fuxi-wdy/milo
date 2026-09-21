@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<#import "/common/common.html" as common>
+<html lang="zh">
+<head>
+    <@common.commonHead title="创建用户或建表空间"/>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <!-- ibox-title 固定顶部 -->
+               <!-- <div class="ibox-title" id="fixedToolbar">
+                    <button id="edit" class="btn btn-primary btn-xs m-l-sm" onclick="edit()" type="button">编辑</button>
+                    <button id="save" class="btn btn-primary btn-xs" onclick="save()" type="button">保存</button>
+                </div>-->
+                <div class="ibox-content" id="eg">
+
+                    <div class="click2edit wrapper">
+                        <!-- 两列布局容器 -->
+                        <div class="two-column-wrapper">
+                            <!-- 左列 -->
+                            <div class="col-left">
+                                <h3>-------------离线安装---------------------</h3>
+<pre>1.创建目录 【mkdir -p /media/cdrom】
+2.挂载镜像 【mount -o loop -t iso9660 /home/soft/CentOS-6.9-x86_64-bin-DVD1.iso /media/cdrom】----注意上传镜像的名称
+3.进入yum目录【cd /etc/yum.repos.d】
+4.备份yum配置【mkdir -p bak】把文件移动到bak中
+5.修改yum配置【vim /etc/yum.repos.d/CentOS-Media.repo】
+baseurl=file:///media/cdrom/
+enabled=1
+6.执行以下命令
+yum clean all
+yum makecache
+yum -y install gpm
+yum -y install binutils compat-libcap1 compat-libstdc++ gcc gcc-c++ glibc glibc-devel libgcc libstdc++ libstdc++-devel libaio sysstat libaio-devel elfutils-libelf-devel unixODBC unixODBC-devel</pre>
+                                <h3>-----------------在线安装--------------------</h3>
+                                <h3>1.安装依赖包【----注：如无法在线安装依赖包,则使用离线安装】</h3>
+                                <pre>yum -y install binutils compat-libstdc++-33 elfutils-libelf elfutils-libelf-devel glibc glibc-common glibc-devel
+gcc gcc-c++ libaio-devel libaio libgcc libstdc++ libstdc++-devel make sysstat unixODBC unixODBC-devel
+pdksh ksh libaio.i686 glibc.i686 compat-libstdc++-33.i686 libaio-devel.i686 libgcc.i686 libstdc++.i686 unixODBC.i686 unixODBC-devel.i686</pre>
+
+
+                                <h3>2.创建用户组：</h3>
+<pre>groupadd oinstall
+groupadd dba
+useradd -g oinstall -G dba oracle
+passwd oracle	密码输入2次</pre>
+
+                                <h3>3.修改配置文件</h3>
+                                <pre>vim /etc/security/limits.conf</pre>
+
+                                <pre>* soft nofile 65535
+* hard nofile 65535
+* soft nproc 65535
+* hard nproc 65535
+* soft stack 10240
+* hard stack 10240
+
+oracle soft nproc 65536
+oracle hard nproc 65536
+oracle soft nofile 65536
+oracle hard nofile 65536
+oracle hard stack 65536</pre>
+
+                                <h3>4.修改内核变量配置文件</h3>
+                                <pre>vim /etc/sysctl.conf</pre>
+
+                                <pre>fs.file-max = 6815744
+fs.aio-max-nr = 1048576
+kernel.shmall = 内存 * 60% * 1024 *1024 * 1024 / 4096
+kernel.shmmax = 内存 * 60% * 1024 *1024 * 1024
+kernel.shmmni = 4096
+kernel.sem = 250 32000 100 128
+net.ipv4.ip_local_port_range = 9000 65500
+net.core.rmem_default = 4194304
+net.core.rmem_max = 4194304
+net.core.wmem_default = 262144
+net.core.wmem_max = 1048576</pre>
+                                <pre>添加完成后，执行sysctl -p使配置文件生效</pre>
+
+                                <h3>5.修改配置文件vim /etc/profile</h3>
+
+                                <pre>5.修改配置文件vim /etc/profile</pre>
+                                <pre>if [ $USER = "oracle" ]; then
+if [ $SHELL = "/bin/ksh" ]; then
+ulimit -p 16384
+ulimit -n 65536
+else
+ulimit -u 16384 -n 65536
+fi
+fi</pre>
+                                <pre>添加完成后，执行source /etc/profile</pre>
+
+                                <h3>7.创建文件夹</h3>
+                                <pre>mkdir -p /home/oracle/app
+mkdir -p /home/oracle/app/oracle
+mkdir -p /home/oracle/app/oradata
+mkdir -p /home/oracle/app/oracle/product
+mkdir -p /home/oracle/app/oracle/oraInventory</pre>
+                                <h3>在更改文件夹权限</h3>
+                                <pre>chown -R oracle:oinstall /home/oracle</pre>
+
+                                <h3>8.配置oracle用户的环境变量</h3>
+                                <pre>su - oracle</pre>
+
+                                <pre>vim .bash_profile</pre>
+
+                                <pre>export ORACLE_BASE=/home/oracle/app
+export ORACLE_HOME=$ORACLE_BASE/oracle/product/11.2.4/dbhome_1
+export ORACLE_SID=orcl
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/usr/lib
+export PATH=$ORACLE_BASE/oracle/product/11.2.4/dbhome_1/bin:/bin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/X11R6/bin
+export PATH=$ORACLE_HOME/bin:$PATH</pre>
+
+                                <h4>---------------------------------------------</h4>
+                                <pre>ln -s $ORACLE_HOME/bin/sqlplus /usr/bin</pre>
+
+                                <pre>-bash-4.1$ cp /etc/skel/.bash*  ~  ##(/etc/skel 新用户老家的样子，所以从这里复制)</pre>
+                                <pre>-bash-4.1$ ls -la</pre>
+
+                                <h3>数据库安装（重新打开一个控制台，oracle用户登录）</h3>
+                                <pre>进入database文件夹下，执行./runInstaller进行数据库安装</pre>
+
+                                <h3>错误解决</h3>
+                                timeout in locking authority file /home/username/.Xauthority
+                                http://blog.sciencenet.cn/blog-100253-982754.html
+
+                                <h3>乱码解决：export LC_ALL=en_US</h3>
+                                <pre>256DISPALY不通过解决 export DISPLAY=:0.0[可能在root权限下执行,xhost +]</pre>
+
+                                <h3>取消勾选email</h3>
+                                <pre>选择insttall database software only
+勾选Ignore All</pre>
+
+                                <pre>安装监听</pre>
+                                <pre>root控制台
+cd /opt/oracle/app/oracle/product/11.2.0/dbhome_1
+./root.sh
+Copying dbhome to /opt/oracle/app/oracle/product/11.2.0/dbhome_1/bin</pre>
+
+                                <h3>oracle控制台 su - oracle</h3>
+                                <pre>cd /opt/oracle/app/oracle/product/11.2.0/dbhome_1/bin
+执行 ./netca</pre>
+
+                                <h3>创建实例</h3>
+                                <pre>cd /opt/oracle/app/oracle/product/11.2.0/dbhome_1/bin
+执行./dbca
+Database Name 填写orcl
+输入密码Oracle123
+选择Character Sets
+选择Choose from the list of character sets
+ZHS16GBK-GBK-16-bit</pre>
+
+                            </div>
+
+                            <!-- 右列 -->
+                            <div class="col-right">
+                                <h3>1.创建用户</h3>
+                                <pre>create user 数据库用户名 identified by "数据库密码" default tablespace FS_BASE_TBS temporary tablespace TEMP profile DEFAULT;
+grant connect to 数据库用户名;
+grant dba to 数据库用户名;
+grant resource to 数据库用户名;
+grant unlimited tablespace to 数据库用户名;</pre>
+
+
+                                <h3>2.创建表空间</h3>
+
+                                <p>优先查看路径：</p>
+
+                                <pre>select * from dba_data_files</pre>
+
+
+
+                                <pre>CREATE TABLESPACE TBS_PLATFORM
+LOGGING
+DATAFILE '/home/oracle/app/oradata/orcl/TBS_PLATFORM_01.dbf' SIZE 5G
+AUTOEXTEND ON NEXT 1G MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;
+
+CREATE TABLESPACE FS_BASE_TBS
+LOGGING
+DATAFILE '/home/oracle/app/oradata/orcl/FS_BASE_TBS_01.dbf' SIZE 5G
+AUTOEXTEND ON NEXT 1G MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;
+
+CREATE TABLESPACE FS_BASE_INDEX
+LOGGING
+DATAFILE '/home/oracle/app/oradata/orcl/FS_BASE_INDEX_01.dbf' SIZE 5G
+AUTOEXTEND ON NEXT 1G MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;
+
+CREATE TABLESPACE FS_BSAF_TBS
+LOGGING
+DATAFILE '/home/oracle/app/oradata/orcl/FS_BSAF_TBS_01.dbf' SIZE 5G
+AUTOEXTEND ON NEXT 1G MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;
+
+CREATE TABLESPACE FS_BSAF_INDEX
+LOGGING
+DATAFILE '/home/oracle/app/oradata/orcl/FS_BSAF_INDEX_01.dbf' SIZE 5G
+AUTOEXTEND ON NEXT 1G MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;
+
+CREATE TABLESPACE FS_BUSI_TBS
+LOGGING
+DATAFILE '/home/oracle/app/oradata/orcl/FS_BUSI_TBS_01.dbf' SIZE 5G
+AUTOEXTEND ON NEXT 1G MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;
+
+CREATE TABLESPACE FS_INDEX_TBS
+LOGGING
+DATAFILE '/home/oracle/app/oradata/orcl/FS_INDEX_TBS_01.dbf' SIZE 5G
+AUTOEXTEND ON NEXT 1G MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;
+
+CREATE TABLESPACE FS_BUSI_TBS_2018
+LOGGING
+DATAFILE '/home/oracle/app/oradata/orcl/FS_BUSI_TBS_2018_01.dbf' SIZE 1G
+AUTOEXTEND ON NEXT 1G MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;
+
+CREATE TABLESPACE FS_INDEX_TBS_2018
+LOGGING
+DATAFILE '/home/oracle/app/oradata/orcl/FS_INDEX_TBS_2018_01.dbf' SIZE 5G
+AUTOEXTEND ON NEXT 1G MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;
+
+CREATE TABLESPACE FS_BUSI_TBS_2019
+LOGGING
+DATAFILE '/home/oracle/app/oradata/orcl/FS_BUSI_TBS_2019_01.dbf' SIZE 1G
+AUTOEXTEND ON NEXT 1G MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;
+
+CREATE TABLESPACE FS_INDEX_TBS_2019
+LOGGING
+DATAFILE '/home/oracle/app/oradata/orcl/FS_INDEX_TBS_2019_01.dbf' SIZE 5G
+AUTOEXTEND ON NEXT 1G MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;
+
+CREATE TABLESPACE FS_BUSI_TBS_2020
+LOGGING
+DATAFILE '/home/oracle/app/oradata/orcl/FS_BUSI_TBS_2020.dbf'SIZE 1G
+AUTOEXTEND ON NEXT 1G MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;
+
+CREATE TABLESPACE FS_INDEX_TBS_2020
+LOGGING
+DATAFILE '/home/oracle/app/oradata/orcl/FS_INDEX_TBS_2020.dbf' SIZE 5G
+AUTOEXTEND ON NEXT 1G MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;
+
+CREATE TABLESPACE FS_BUSI_TBS_2021
+LOGGING
+DATAFILE '/home/oracle/app/oradata/orcl/FS_BUSI_TBS_2021.dbf'SIZE 1G
+AUTOEXTEND ON NEXT 1G MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;
+
+CREATE TABLESPACE FS_INDEX_TBS_2021
+LOGGING
+DATAFILE '/home/oracle/app/oradata/orcl/FS_INDEX_TBS_2021.dbf' SIZE 1G
+AUTOEXTEND ON NEXT 1G MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;
+
+CREATE TABLESPACE FS_BUSI_TBS_2022
+LOGGING
+DATAFILE '/home/oracle/app/oradata/orcl/FS_BUSI_TBS_2022.dbf'SIZE 1G
+AUTOEXTEND ON NEXT 1G MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;
+
+CREATE TABLESPACE FS_INDEX_TBS_2022
+LOGGING
+DATAFILE '/home/oracle/app/oradata/orcl/FS_INDEX_TBS_2022.dbf' SIZE 1G
+AUTOEXTEND ON NEXT 1G MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;
+
+CREATE TABLESPACE FS_BUSI_TBS_2023
+LOGGING
+DATAFILE '/home/oracle/app/oradata/orcl/FS_BUSI_TBS_2023_01.dbf'SIZE 1G
+AUTOEXTEND ON NEXT 1G MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;
+
+CREATE TABLESPACE FS_INDEX_TBS_2023
+LOGGING
+DATAFILE '/home/oracle/app/oradata/orcl/FS_INDEX_TBS_2023_01.dbf' SIZE 1G
+AUTOEXTEND ON NEXT 1G MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO;</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<@common.commonScripts />
+<script>
+    $(document).ready(function () {
+        $('.summernote').summernote({
+            lang: 'zh-CN'
+        });
+
+        // ===== 滚动时给固定栏添加阴影效果 =====
+        var $toolbar = $('.ibox-title');
+        var $window = $(window);
+        var offsetTop = $toolbar.offset().top;
+
+        $window.on('scroll', function() {
+            var scrollTop = $window.scrollTop();
+            if (scrollTop > offsetTop) {
+                $toolbar.addClass('scrolled');
+            } else {
+                $toolbar.removeClass('scrolled');
+            }
+        });
+
+        // ===== 窗口resize时重新计算偏移量 =====
+        $window.on('resize', function() {
+            offsetTop = $toolbar.offset().top;
+        });
+    });
+
+    var edit = function () {
+        $("#eg").addClass("no-padding");
+        $('.click2edit').summernote({
+            lang: 'zh-CN',
+            focus: true
+        });
+        // 编辑模式下，确保工具栏固定
+        setTimeout(function() {
+            $('.note-toolbar').css({
+                'position': 'sticky',
+                'top': '0',
+                'z-index': '1001',
+                'background': '#f7f9fa',
+                'border-bottom': '2px solid #e7eaec',
+                'box-shadow': '0 2px 8px rgba(0,0,0,0.08)'
+            });
+        }, 100);
+    };
+
+    var save = function () {
+        $("#eg").removeClass("no-padding");
+        var aHTML = $('.click2edit').summernote('code');
+        $('.click2edit').summernote('destroy');
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<#import "/common/common.html" as common>
+<html lang="zh">
+<head>
+    <@common.commonHead title="独立部署配置"/>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <!-- ibox-title 固定顶部 -->
+               <!-- <div class="ibox-title" id="fixedToolbar">
+                    <button id="edit" class="btn btn-primary btn-xs m-l-sm" onclick="edit()" type="button">编辑</button>
+                    <button id="save" class="btn btn-primary btn-xs" onclick="save()" type="button">保存</button>
+                </div>-->
+                <div class="ibox-content" id="eg">
+
+                    <div class="click2edit wrapper">
+                        <!-- 两列布局容器 -->
+                        <div class="two-column-wrapper">
+                            <!-- 左列 -->
+                            <div class="col-left">
+
+                                <h3>------------短信通知--------------</h3>
+                                <h4>0不通知, 2手机通知, 4特殊通知</h4>
+                                <h4>行业3034-07修改为2</h4>
+                                <pre>UPDATE uaa_config SET FVALUE = '2' WHERE FKEY = 'INDUSTRY_NOTICE_TYPE'</pre>
+
+                                <h3>-----------------------医疗-----------------</h3>
+                                <p>开票金额可以为0</p>
+                                <pre>update fab_item set fallowzero ='1'where fitemcode='项目编码';
+update fab_item set fallowzero ='1'where fitemcode='0801';
+update fab_item set fallowzero ='1'where fitemcode='0802';
+update fab_item set fallowzero ='1'where fitemcode='0803';
+update fab_item set fallowzero ='1'where fitemcode='0804';
+update fab_item set fallowzero ='1'where fitemcode='0805';
+update fab_item set fallowzero ='1'where fitemcode='0806';
+update fab_item set fallowzero ='1'where fitemcode='0807';
+update fab_item set fallowzero ='1'where fitemcode='0808';
+update fab_item set fallowzero ='1'where fitemcode='0809';
+update fab_item set fallowzero ='1'where fitemcode='0810';
+update fab_item set fallowzero ='1'where fitemcode='0811';
+update fab_item set fallowzero ='1'where fitemcode='0812';
+update fab_item set fallowzero ='1'where fitemcode='0813';
+update fab_item set fallowzero ='1'where fitemcode='0814';
+update fab_item set fallowzero ='1'where fitemcode='0815';</pre>
+
+                                <h3>-------------------------开票点自定义章---------</h3>
+                                <pre>insert into nontax_config
+(FKEY, FSYSTEM, FMODULE, FNAME, FVALUE, FSORT, FTYPE, FREADONLY, FNEEDREBOOT, FOPTIONS, FMEMO, FISSYNC, FUPDATETIME)
+values ('AGEN_SEAL_MANAGE_MODE', '006', '001', '单位印章管理模式', '1', 1.00, 3, 1, 0, '1=通用模式(印章直接与单位挂接),2=按照票据管理(印章与票据挂接)',
+'单位印章管理模式：1通用模式(印章直接与单位挂接), 2按照票据管理（印章与票据挂接）', 1, '20181206171741872');</pre>
+                            </div>
+
+                            <!-- 右列 -->
+                            <div class="col-right">
+
+                                <h4>--查询是否换开纸质票据:</h4>
+                                <pre>SELECT * FROM UAA_CONFIG WHERE FKEY='INDUSTRY_ENABLE_SPECIALBILL';</pre>
+                                <h4>-- 修改</h4>
+                                <pre>UPDATE UAA_CONFIG SET FVALUE='1' WHERE FKEY='INDUSTRY_ENABLE_SPECIALBILL';</pre>
+                                <h4> -- 修改h5页面地址</h4>
+                                <pre>UPDATE UAA_CONFIG SET FVALUE='http://172.16.81.226:7001' WHERE FKEY='INDUSTRY_GET_H5_PATH_IPPORT';</pre>
+                                <pre>select t.*,rowid from uaa_config t where t.fkey in ('AGENCY_ONLINE_REST_URL','INDUSTRY_PICTURE_GET_TYPE','INDUSTRY_DOWNLOAD_BILL_RULE')</pre>
+                                <pre>UPDATE UAA_CONFIG SET FVALUE='http://202.61.91.26:16002/agency-web/agency3/rest.do' WHERE FKEY='AGENCY_ONLINE_REST_URL';</pre>
+                                <pre>UPDATE UAA_CONFIG SET FVALUE='3' WHERE FKEY='INDUSTRY_PICTURE_GET_TYPE';</pre>
+                                <pre>UPDATE UAA_CONFIG SET FVALUE='0' WHERE FKEY='INDUSTRY_DOWNLOAD_BILL_RULE';</pre>
+
+                                <h3>-----------短信通知----------3122</h3>
+                                <pre>select * from nontax_config
+    where fkey in ('INDUSTRY_NOTICE_TYPE',
+                    'com.bosssoft.nontax.agency.notice.upload',
+                    'com.bosssoft.nontax.agency.invoice.ifSendMessage',
+                    'INDUSTRY_NOTICE_MODE');
+INDUSTRY_NOTICE_TYPE 2
+INDUSTRY_NOTICE_MODE 1
+com.bosssoft.nontax.agency.notice.upload 1
+com.bosssoft.nontax.agency.invoice.ifSendMessage 0</pre>
+
+                                <h3>-----------------3122启动报错-----------------------</h3>
+                                <h4>需要在应用中心外部化配置application.properties加上如下配置：</h4>
+                                <pre>swagger.api.copyright=bosssoft</pre>
+
+                                <h3>--------------------标识无效--------------------------------</h3>
+                                <h4>参数配置-通用行业-数据同步（字段兼容：启用）</h4>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<@common.commonScripts/>
+<script>
+    $(document).ready(function () {
+        $('.summernote').summernote({
+            lang: 'zh-CN'
+        });
+
+        // ===== 滚动时给固定栏添加阴影效果 =====
+        var $toolbar = $('.ibox-title');
+        var $window = $(window);
+        var offsetTop = $toolbar.offset().top;
+
+        $window.on('scroll', function() {
+            var scrollTop = $window.scrollTop();
+            if (scrollTop > offsetTop) {
+                $toolbar.addClass('scrolled');
+            } else {
+                $toolbar.removeClass('scrolled');
+            }
+        });
+
+        // ===== 窗口resize时重新计算偏移量 =====
+        $window.on('resize', function() {
+            offsetTop = $toolbar.offset().top;
+        });
+    });
+
+    var edit = function () {
+        $("#eg").addClass("no-padding");
+        $('.click2edit').summernote({
+            lang: 'zh-CN',
+            focus: true
+        });
+        // 编辑模式下，确保工具栏固定
+        setTimeout(function() {
+            $('.note-toolbar').css({
+                'position': 'sticky',
+                'top': '0',
+                'z-index': '1001',
+                'background': '#f7f9fa',
+                'border-bottom': '2px solid #e7eaec',
+                'box-shadow': '0 2px 8px rgba(0,0,0,0.08)'
+            });
+        }, 100);
+    };
+
+    var save = function () {
+        $("#eg").removeClass("no-padding");
+        var aHTML = $('.click2edit').summernote('code');
+        $('.click2edit').summernote('destroy');
+    };
+</script>
+</body>
+</html>

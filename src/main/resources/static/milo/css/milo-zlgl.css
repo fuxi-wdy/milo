@@ -1,0 +1,154 @@
+/* 两列布局样式 */
+.two-column-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+.two-column-wrapper .col-left {
+  flex: 1;
+  min-width: 280px;
+}
+.two-column-wrapper .col-right {
+  flex: 1;
+  min-width: 280px;
+}
+/* 保持原有内容样式 */
+.click2edit h3 {
+  margin-top: 18px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #1a3c6e;
+}
+.click2edit p {
+  margin-bottom: 6px;
+  line-height: 1.7;
+  color: #333;
+}
+.click2edit .highlight {
+  color: #c7254e;
+  background: #f9f2f4;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 13px;
+}
+.click2edit .section-title {
+  border-left: 4px solid #1a84c6;
+  padding-left: 12px;
+  margin-top: 24px;
+  margin-bottom: 14px;
+  font-weight: 600;
+  color: #1a3c6e;
+  font-size: 16px;
+}
+/* Summernote 编辑模式下保持两列 */
+.note-editor .two-column-wrapper {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 30px !important;
+}
+.note-editor .two-column-wrapper .col-left,
+.note-editor .two-column-wrapper .col-right {
+  flex: 1 !important;
+  min-width: 280px !important;
+}
+/* 响应式 */
+@media (max-width: 768px) {
+  .two-column-wrapper {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .two-column-wrapper .col-left,
+  .two-column-wrapper .col-right {
+    min-width: auto;
+  }
+}
+
+/* ===== 冻结顶部工具栏样式 ===== */
+.ibox-title-fixed {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #f7f9fa;
+  border-bottom: 2px solid #e7eaec;
+  padding: 10px 15px;
+  margin: -1px -1px 0 -1px;
+  border-radius: 4px 4px 0 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+/* 确保ibox-title在滚动时保持固定 */
+.ibox.float-e-margins {
+  position: relative;
+}
+.ibox-title {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: #f7f9fa;
+  border-bottom: 2px solid #e7eaec;
+  border-radius: 4px 4px 0 0;
+  padding: 10px 15px;
+  margin: -1px -1px 0 -1px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+/* 编辑模式下的工具栏也要保持固定 */
+.note-toolbar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1001 !important;
+  background: #f7f9fa !important;
+  border-bottom: 2px solid #e7eaec !important;
+  padding: 8px 10px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+}
+/* 编辑模式下，主容器顶部留出空间 */
+.note-editor.note-frame {
+  margin-top: 0 !important;
+}
+/* 让ibox-content在编辑模式下有合适的内边距 */
+#eg.no-padding {
+  padding: 0 !important;
+}
+#eg.no-padding .ibox-title {
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+/* 确保保存按钮在固定栏中保持可见 */
+.ibox-title .btn {
+  position: relative;
+  z-index: 1002;
+}
+/* 滚动时阴影加深效果（通过JS动态添加类） */
+.ibox-title.scrolled {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  border-bottom-color: #1a84c6;
+}
+/* 内容区域顶部补偿，防止被固定栏遮挡 */
+.ibox-content {
+  padding-top: 20px;
+}
+/* 编辑模式下，固定栏的兼容 */
+.note-editor .note-toolbar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1001 !important;
+}
+/* 当编辑模式激活时，确保ibox-title仍然固定 */
+.note-editor .ibox-title {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important;
+}
+/* 编辑模式下的note-editor容器上边距 */
+.note-editor.note-frame .note-editing-area {
+  padding-top: 5px;
+}
+/* Summernote 编辑器全屏时工具栏保持固定 */
+.note-editor.fullscreen .note-toolbar {
+  top: 0 !important;
+}
+/* 全屏时 ibox-title 隐藏 */
+.note-editor.fullscreen .ibox-title {
+  display: none !important;
+}

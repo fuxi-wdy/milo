@@ -1,0 +1,61 @@
+<#macro commonHead title="" extraCss=[] extraJs=[]>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="keywords" content="">
+<meta name="description" content="">
+<meta content="" name="csrf-token"/>
+<title>${title!''}</title>
+
+<!-- ====== 基础 CSS ====== -->
+<link href="/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="/css/font-awesome.min.css" rel="stylesheet"/>
+<!-- bootstrap-table 表格插件样式 -->
+<link href="/ajax/libs/bootstrap-table/bootstrap-table.min.css" rel="stylesheet"/>
+<link href="/css/animate.min.css" rel="stylesheet"/>
+<link href="/css/style.min.css" rel="stylesheet"/>
+<link href="/ruoyi/css/ry-ui.css" rel="stylesheet"/>
+<link href="/milo/css/city-qh.css" rel="stylesheet"/>
+<link href="/milo/css/milo-zlgl.css" rel="stylesheet"/>
+<link href="/milo/css/summernote-bs4.min.css" rel="stylesheet"/>
+
+
+<!-- ====== 额外 CSS（按需引入） ====== -->
+<#if extraCss?is_sequence>
+<#list extraCss as css>
+<link href="${css}" rel="stylesheet"/>
+</#list>
+</#if>
+</#macro>
+
+<#macro commonScripts extraJs=[]>
+<!-- ====== 基础 JS ====== -->
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<!-- bootstrap-table 表格插件 -->
+<script src="/ajax/libs/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="/ajax/libs/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+<script src="/ajax/libs/bootstrap-table/extensions/mobile/bootstrap-table-mobile.js"></script>
+<!-- jquery-validate 表单验证插件 -->
+<script src="/ajax/libs/validate/jquery.validate.min.js"></script>
+<script src="/ajax/libs/validate/jquery.validate.extend.js"></script>
+<script src="/ajax/libs/validate/messages_zh.js"></script>
+<!-- bootstrap-table 表格树插件 -->
+<script src="/ajax/libs/bootstrap-table/extensions/tree/bootstrap-table-tree.min.js"></script>
+<!-- 遮罩层 -->
+<script src="/ajax/libs/blockUI/jquery.blockUI.js"></script>
+<script src="/ajax/libs/iCheck/icheck.min.js"></script>
+<script src="/ajax/libs/layer/layer.min.js"></script>
+<script src="/ajax/libs/layui/layui.min.js"></script>
+<script src="/ruoyi/js/common.js"></script>
+<script src="/ruoyi/js/ry-ui.js"></script>
+<script src="/milo/js/jquery-3.6.0.min.js"></script>
+<script src="/milo/js/summernote-bs4.min.js"></script>
+
+<!-- ====== 额外 JS（按需引入） ====== -->
+<#if extraJs?is_sequence>
+<#list extraJs as js>
+<script src="${js}"></script>
+</#list>
+</#if>
+</#macro>

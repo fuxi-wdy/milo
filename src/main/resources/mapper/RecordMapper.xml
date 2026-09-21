@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.milo.mapper.RecordMapper">
+
+	<resultMap type="Record" id="RecordResult">
+		<id     property="id"         column="id"        />
+		<result property="name"       column="name"      />
+		<result property="riqi"     column="riqi"    />
+		<result property="question"       column="question"      />
+		<result property="answer"       column="answer"      />
+		<result property="op"       column="op"      />
+
+	</resultMap>
+
+	<sql id="selectListRecordVo" >
+		select id ,name , riqi ,question ,answer ,op    from scyfservers
+	</sql>
+
+
+
+	<!-- 查询列表 -->
+	<select id="selectListRecord" parameterType="com.project.milo.entity.Record" resultType="com.project.milo.entity.Record">
+		select id id ,name name , riqi riqi ,question question ,answer answer ,op op from scyfservers
+		<where>
+			<if test="name != null and name != ''">
+				AND name like concat('%', #{name}, '%')
+			</if>
+			<if test="op != null and op != ''">
+				AND op like concat('%', #{op}, '%')
+			</if>
+			<if test="params.startDate != null and params.startDate != ''"><!-- 开始时间检索 -->
+				and date_format(riqi,'%Y%m%d') &gt;= date_format(#{params.startDate},'%Y%m%d')
+			</if>
+			<if test="params.endDate != null and params.endDate != ''"><!-- 结束时间检索 -->
+				and date_format(riqi,'%Y%m%d') &lt;= date_format(#{params.endDate},'%Y%m%d')
+			</if>
+			<!-- 默认查询当月数据（当开始和结束时间都为空时生效） -->
+			<if test="(params.startDate == null or params.startDate == '') and (params.endDate == null or params.endDate == '')">
+				AND YEAR(riqi) = YEAR(CURDATE())
+				AND MONTH(riqi) = MONTH(CURDATE())
+			</if>
+		</where>
+	</select>
+
+	<!--查询导出-->
+	<select id="selectListRecordExport" parameterType="com.project.milo.entity.Record" resultType="com.project.milo.entity.Record">
+		select id id ,name name , riqi riqi ,question question ,answer answer ,op op from scyfservers
+		<where>
+			<if test="name != null and name != ''">
+				AND name like concat('%', #{name}, '%')
+			</if>
+			<if test="op != null and op != ''">
+				AND op like concat('%', #{op}, '%')
+			</if>
+			<if test="startDate != null and startDate != ''"><!-- 开始时间检索 -->
+				and date_format(riqi,'%Y%m%d') &gt;= date_format(#{startDate},'%Y%m%d')
+			</if>
+			<if test="endDate != null and endDate != ''"><!-- 结束时间检索 -->
+				and date_format(riqi,'%Y%m%d') &lt;= date_format(#{endDate},'%Y%m%d')
+			</if>
+			<!-- 默认查询当月数据（当开始和结束时间都为空时生效） -->
+			<if test="(startDate == null or startDate == '') and (endDate == null or endDate == '')">
+				AND YEAR(riqi) = YEAR(CURDATE())
+				AND MONTH(riqi) = MONTH(CURDATE())
+			</if>
+		</where>
+	</select>
+
+	<!-- 统计导出总数（与列表查询同条件，含默认当月过滤） -->
+	<select id="countRecord" parameterType="com.project.milo.entity.Record" resultType="long">
+		select count(*) from scyfservers
+		<where>
+			<if test="name != null and name != ''">
+				AND name like concat('%', #{name}, '%')
+			</if>
+			<if test="op != null and op != ''">
+				AND op like concat('%', #{op}, '%')
+			</if>
+			<if test="startDate != null and startDate != ''"><!-- 开始时间检索 -->
+				and date_format(riqi,'%Y%m%d') &gt;= date_format(#{startDate},'%Y%m%d')
+			</if>
+			<if test="endDate != null and endDate != ''"><!-- 结束时间检索 -->
+				and date_format(riqi,'%Y%m%d') &lt;= date_format(#{endDate},'%Y%m%d')
+			</if>
+			<!-- 默认查询当月数据（当开始和结束时间都为空时生效） -->
+			<if test="(startDate == null or startDate == '') and (endDate == null or endDate == '')">
+				AND YEAR(riqi) = YEAR(CURDATE())
+				AND MONTH(riqi) = MONTH(CURDATE())
+			</if>
+		</where>
+	</select>
+	<!-- 添加 -->
+	<insert id="insertRecord" parameterType="com.project.milo.entity.Record" useGeneratedKeys="true" keyProperty="id">
+		insert into scyfservers
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="name != null and name != ''">name,</if>
+			<if test="riqi != null and riqi != ''">riqi,</if>
+			<if test="question != null and question != ''">question,</if>
+			<if test="answer != null and answer != ''">answer,</if>
+			<if test="op != null and op != ''">op</if>
+		</trim>
+		values
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="name != null and name != ''">#{name},</if>
+			<if test="riqi != null and riqi != ''">#{riqi},</if>
+			<if test="question != null and question != ''">#{question},</if>
+			<if test="answer != null and answer != ''">#{answer},</if>
+			<if test="op != null and op != ''">#{op}</if>
+
+		</trim>
+	</insert>
+
+	<!-- 批量新增（导入用） -->
+	<insert id="batchInsert" parameterType="java.util.List">
+		insert into scyfservers (name, riqi, question, answer, op) values
+		<foreach collection="list" item="item" separator=",">
+			(#{item.name}, #{item.riqi}, #{item.question}, #{item.answer}, #{item.op})
+		</foreach>
+	</insert>
+
+
+
+	<!-- 根据id查询 -->
+	<select id="selectRecordById" parameterType="com.project.milo.entity.Record" resultType="com.project.milo.entity.Record">
+		select id id ,name name , riqi riqi ,question question ,answer answer ,op op from scyfservers where id=#{id}
+	</select>
+
+
+
+	<!-- 修改 -->
+	<update id="updateRecord" parameterType="com.project.milo.entity.Record">
+		update scyfservers
+		<set>
+			<if test="name != null and name != ''">name = #{name},</if>
+			<if test="riqi != null and riqi != ''">riqi = #{riqi},</if>
+			<if test="question != null and question != ''">question = #{question},</if>
+			<if test="answer != null and answer != ''">answer = #{answer},</if>
+			<if test="op != null and op != ''">op = #{op}</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<!-- 删除 -->
+	<delete id="deleteRecord" parameterType="com.project.milo.entity.Record">
+		delete from scyfservers where id = #{id}
+	</delete>
+
+
+	<!--查询大于30天没有维护的单位-->
+	<select id="selectRecordByNameAndOp" resultType="com.project.milo.entity.Record" parameterType="com.project.milo.entity.Record">
+		SELECT
+			t.NAME name,
+			t.concat op,
+		    DATEDIFF(CURDATE(),t.riqi) AS days,
+			t.riqi riqi
+		FROM
+			(
+			SELECT
+			s.NAME,
+			s.concat,
+			MAX( r.riqi ) AS riqi
+			FROM
+			scyf s
+			LEFT JOIN scyfservers r ON s.NAME = r.NAME
+			WHERE
+			( s.boss IS NULL OR s.boss != 1 )
+			GROUP BY
+			s.NAME,
+			s.concat
+			) t
+		WHERE
+			t.riqi IS NULL
+			OR t.riqi &lt; DATE_SUB( CURDATE(), INTERVAL 30 DAY )
+			ORDER BY
+			t.riqi DESC
+	</select>
+
+
+    <select id="searchUnitNames" parameterType="string" resultType="java.util.Map">
+        select distinct name as name from scyfservers
+        where name like concat('%', #{name}, '%')
+        order by name
+        limit 20
+    </select>
+</mapper>

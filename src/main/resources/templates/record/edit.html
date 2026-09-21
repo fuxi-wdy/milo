@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>修改记录</title>
+
+	<link href="/css/bootstrap.min.css" rel="stylesheet"/>
+	<link href="/css/font-awesome.min.css" rel="stylesheet"/>
+	<link href="/ajax/libs/bootstrap-table/bootstrap-table.min.css" rel="stylesheet"/>
+	<link href="/css/animate.min.css" rel="stylesheet"/>
+	<link href="/css/style.min.css" rel="stylesheet"/>
+	<link href="/ruoyi/css/ry-ui.css" rel="stylesheet"/>
+	<link href="/ajax/libs/datapicker/bootstrap-datetimepicker.min.css" rel="stylesheet"/>
+
+	<script src="/js/jquery.min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+	<script src="/ajax/libs/datapicker/bootstrap-datetimepicker.min.js"></script>
+	<script src="/ajax/libs/bootstrap-table/bootstrap-table.min.js"></script>
+	<script src="/ajax/libs/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+	<script src="/ajax/libs/bootstrap-table/extensions/mobile/bootstrap-table-mobile.js"></script>
+	<script src="/ajax/libs/validate/jquery.validate.min.js"></script>
+	<script src="/ajax/libs/validate/jquery.validate.extend.js"></script>
+	<script src="/ajax/libs/validate/messages_zh.js"></script>
+	<script src="/ajax/libs/bootstrap-table/extensions/tree/bootstrap-table-tree.min.js"></script>
+	<script src="/ajax/libs/blockUI/jquery.blockUI.js"></script>
+	<script src="/ajax/libs/iCheck/icheck.min.js"></script>
+	<script src="/ajax/libs/layer/layer.min.js"></script>
+	<script src="/ajax/libs/layui/layui.min.js"></script>
+	<script src="/ruoyi/js/common.js"></script>
+	<script src="/ruoyi/js/ry-ui.js"></script>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	<form class="form-horizontal m" id="form-post-add">
+		<!-- 单位名称搜索框 -->
+		<div class="form-group">
+			<label class="col-sm-3 control-label"></label>
+			<div class="col-sm-6">
+				<input type="hidden" id="id" name="id" value="${result.id}">
+				<input class="form-control" type="text" id="searchKeyword"
+					   oninput="doQuery(this.value)"
+					   placeholder="输入单位名称关键词搜索">
+			</div>
+		</div>
+
+		<!-- 单位下拉选择（多选） -->
+		<div class="form-group">
+			<label class="col-sm-3 control-label is-required">请选择单位：</label>
+			<div class="col-sm-6">
+				<select class="form-control" id="recordSelect" name="unitName" multiple required size="4">
+					<option value="">— 请先搜索 —</option>
+					<option value="">${result.name}</option>
+				</select>
+				<!--<span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 按住 Ctrl 键可多选</span>-->
+			</div>
+		</div>
+
+		<!-- 已选单位展示（直观反馈） -->
+		<div class="form-group" id="selectedDisplayGroup" style="display:none;">
+			<label class="col-sm-3 control-label">已选单位：</label>
+			<div class="col-sm-6" id="selectedDisplay" style="padding-top:7px;color:#1a7bb9;font-weight:500;"></div>
+		</div>
+
+		<!-- 记录日期 -->
+		<div class="form-group">
+			<label class="col-sm-3 control-label is-required">记录日期：</label>
+			<div class="col-sm-6">
+				<input type="text" class="time-input form-control" value="${result.riqi}" name="riqi" id="riqi" required placeholder="记录日期"/>
+			</div>
+		</div>
+
+		<!-- 问题描述 -->
+		<div class="form-group">
+			<label class="col-sm-3 control-label is-required">问题描述：</label>
+			<div class="col-sm-6">
+				<textarea id="question" name="question" style="width:100%; height:120px;" class="form-control" required>${result.question}</textarea>
+			</div>
+		</div>
+
+		<!-- 处理方式 -->
+		<div class="form-group">
+			<label class="col-sm-3 control-label is-required">处理方式：</label>
+			<div class="col-sm-6">
+				<input class="form-control" type="text" value="${result.answer}" name="answer" id="answer" required>
+			</div>
+		</div>
+
+		<!-- 处理人（单选） -->
+		<div class="form-group">
+			<label class="col-sm-3 control-label is-required">处理人：</label>
+			<div class="col-sm-6">
+				<div class="radio"><label><input type="radio" value="wr" name="optionsRadios" ${(result?? && result.op == 'wr')?string('checked', '')}> 吴荣</label></div>
+				<div class="radio"><label><input type="radio" value="wdy" name="optionsRadios" ${(result?? && result.op == 'wdy')?string('checked', '')}> 王冬洋</label></div>
+				<div class="radio"><label><input type="radio" value="hyh" name="optionsRadios" ${(result?? && result.op == 'hyh')?string('checked', '')}> 何沅航</label></div>
+				<div class="radio"><label><input type="radio" value="cwl" name="optionsRadios" ${(result?? && result.op == 'cwl')?string('checked', '')}> 陈武龙</label></div>
+				<div class="radio"><label><input type="radio" value="zzj" name="optionsRadios" ${(result?? && result.op == 'zzj')?string('checked', '')}> 朱志军</label></div>
+			</div>
+		</div>
+
+	</form>
+</div>
+
+<script type="text/javascript">
+	var prefix = "/api/record";
+
+	// ========== 表单提交 ==========
+	function submitHandler() {
+		if ($.validate.form()) {
+			add();
+		}
+	}
+
+	// ========== 核心：新增保存 ==========
+	function add() {
+		// 1. 获取选中的单位名称（支持多选）
+		var selectedOptions = $("#recordSelect option:selected");
+		var unitNames = [];
+		selectedOptions.each(function() {
+			var text = $(this).text().trim();
+			if (text && text !== "— 请先搜索 —" && text !== "暂无数据") {
+				unitNames.push(text);
+			}
+		});
+
+		// 如果没选任何单位，给出提示
+		if (unitNames.length === 0) {
+			$.modal.alertWarning("请至少选择一个单位！");
+			return;
+		}
+
+		// 多个单位用顿号连接（可根据后端需求改为逗号）
+		var name = unitNames.join("、");
+
+		// 2. 获取其他表单数据
+		var id = $("#id").val().trim();
+		var riqi = $("input[name='riqi']").val().trim();
+		var question = $("textarea[name='question']").val().trim();
+		var answer = $("input[name='answer']").val().trim();
+		var op = $("input[name='optionsRadios']:checked").val();
+
+		// 3. 简单前端校验
+		if (!riqi) { $.modal.alertWarning("请选择记录日期！"); return; }
+		if (!question) { $.modal.alertWarning("请输入问题描述！"); return; }
+		if (!answer) { $.modal.alertWarning("请输入处理方式！"); return; }
+		console.log("提交数据：", name, riqi, question, answer, op,id);
+		// 4. 提交数据
+		$.ajax({
+			cache: true,
+			type: "POST",
+			url: "editSave",
+			data: {
+				"name": name,          // 单位名称（多个用顿号连接）
+				"riqi": riqi,
+				"question": question,
+				"answer": answer,
+				"op": op,
+				"id": id
+			},
+			async: false,
+			error: function(request) {
+				$.modal.alertError("系统错误，请稍后重试");
+			},
+			success: function(data) {
+				$.operate.successCallback(data);
+			}
+		});
+	}
+
+	// ========== 搜索单位（输入时触发） ==========
+	var searchTimer = null;
+
+	function doQuery(value) {
+		// 防抖：避免频繁请求
+		if (searchTimer) {
+			clearTimeout(searchTimer);
+		}
+		searchTimer = setTimeout(function() {
+			_doQuery(value);
+		}, 300);
+	}
+
+	function _doQuery(value) {
+		var $select = $("#recordSelect");
+		var $display = $("#selectedDisplay");
+		var $displayGroup = $("#selectedDisplayGroup");
+
+		// 清空原有选项
+		$select.empty();
+
+		if (!value || value.trim() === "") {
+			$select.append('<option value="">请输入关键词搜索</option>');
+			$displayGroup.hide();
+			return;
+		}
+
+		// 显示加载状态
+		$select.append('<option value="">加载中...</option>');
+
+		$.ajax({
+			type: "POST",
+			url: "/api/record/query",
+			data: { name: value.trim() },
+			success: function(res) {
+				var list = res.rows || res.data || [];
+				$select.empty();
+
+				if (list.length === 0) {
+					$select.append('<option value="">未找到匹配单位</option>');
+					$displayGroup.hide();
+					return;
+				}
+
+				// 填充选项
+				$.each(list, function(index, item) {
+					var option = $('<option></option>')
+							.val(item.id)
+							.text(item.name);
+					$select.append(option);
+				});
+
+				// 清空已选显示
+				$display.text('');
+				$displayGroup.hide();
+
+				// 可选：自动选中第一个（如需开启取消注释）
+				// $select.val(list[0].id);
+				// updateSelectedDisplay();
+			},
+			error: function(xhr, status, error) {
+				console.error("搜索失败:", status, error);
+				$select.empty();
+				$select.append('<option value="">搜索失败，请重试</option>');
+				$displayGroup.hide();
+			}
+		});
+	}
+
+	// ========== 监听选中变化，实时展示已选单位 ==========
+	$(document).on("change", "#recordSelect", function() {
+		updateSelectedDisplay();
+	});
+
+	function updateSelectedDisplay() {
+		var selectedOptions = $("#recordSelect option:selected");
+		var names = [];
+		selectedOptions.each(function() {
+			var text = $(this).text().trim();
+			if (text && text !== "— 请先搜索 —" && text !== "暂无数据" && text !== "请输入关键词搜索") {
+				names.push(text);
+			}
+		});
+
+		var $display = $("#selectedDisplay");
+		var $group = $("#selectedDisplayGroup");
+
+		if (names.length === 0) {
+			$group.hide();
+			return;
+		}
+
+		$display.text("已选 " + names.length + " 个：" + names.join("、"));
+		$group.show();
+	}
+
+	// ========== 关闭页面 ==========
+	function closeItem() {
+		var index = parent.layer.getFrameIndex(window.name);
+		parent.layer.close(index);
+	}
+
+	// ========== 日期控件初始化 ==========
+
+</script>
+</body>
+</html>

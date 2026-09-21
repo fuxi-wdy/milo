@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<#import "/common/common.html" as common>
+<html lang="zh">
+<head>
+    <@common.commonHead title="工具下载"/>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <!-- ibox-title 固定顶部 -->
+               <!-- <div class="ibox-title" id="fixedToolbar">
+                    <button id="edit" class="btn btn-primary btn-xs m-l-sm" onclick="edit()" type="button">编辑</button>
+                    <button id="save" class="btn btn-primary btn-xs" onclick="save()" type="button">保存</button>
+                </div>-->
+                <div class="ibox-content" id="eg">
+
+                    <div class="click2edit wrapper">
+                        <!-- 两列布局容器 -->
+                        <div class="two-column-wrapper">
+                            <!-- 左列 -->
+                            <div class="col-left">
+                                <h3>【rz-sz使用】</h3>
+<pre>查看rpm -qa|grep lrzsz
+下载yum install -y lrzsz
+上传命令：rz -y
+https://blog.csdn.net/weixin_44799217/article/details/127939194</pre>
+
+                                <h3>【oracle创建导出目录】</h3>
+                                <pre>https://blog.csdn.net/yaocsu/article/details/115519519</pre>
+
+                                <h3>【离线安装gcc】</h3>
+                                <pre>https://blog.csdn.net/a1035082174/article/details/88862806</pre>
+                                <h3>【巡检工具】</h3>
+                                <pre>https://musetransfer.com/s/922srixgv</pre>
+
+                                <h3>【字体包下载】</h3>
+                                <pre>https://wwi.lanzoui.com/idcL8ok9hdi</pre>
+
+                                <h3>【取授权工具下载】</h3>
+                                <pre>https://wwi.lanzoui.com/ieLVIdomfsh</pre>
+
+                                <h3>【xmanager工具下载】</h3>
+                                <pre>https://wwi.lanzoui.com/iYt6Zdmrqeh</pre>
+
+                                <h3>【3140定时任务excel下载】</h3>
+                                <pre>https://wwi.lanzoui.com/ivdDAq8nnni</pre>
+
+                                <h3>【openssh升级】</h3>
+                                <pre>https://jingyan.baidu.com/article/359911f52f1dc217ff03062a.html</pre>
+
+                                <h3>【HP raid5 操作】</h3>
+                                <pre>https://dy.163.com/article/FPRVIVTR05371ZUX.html</pre>
+
+                                <h3>【Redis缓存清理】</h3>
+                                <pre>https://www.cnblogs.com/weitaming/p/8952660.html</pre>
+
+                                <h3>【单用户进入修改root密码】</h3>
+                                <pre>https://www.runoob.com/linux/linux-forget-password.html</pre>
+-----------------------------------------------
+<h3>GPT格式化硬盘</h3>
+<pre>https://www.cnblogs.com/zhanbing/p/10339404.html</pre>
+                                <h3>逻辑券分区</h3>
+                                <pre>https://www.cnblogs.com/oilamp/p/11141578.html
+https://www.cnblogs.com/luck666/p/10194004.html</pre>
+-----------------------------------------------
+
+<h3>Linux7安装11g86%报错：Error in invoking target 'agent nmhs' of makefile</h3>
+                                <pre>http://blog.itpub.net/29475508/viewspace-2120836/</pre>
+
+                                <h3>数据库备份报错ORA-31634</h3>
+                                <pre>https://www.cnblogs.com/wenshuifan/p/11847539.html</pre>
+
+                                <h3>博思问题汇总1</h3>
+                                <pre>https://note.youdao.com/ynoteshare1/index.html?id=544bb366bb80a3dc1d2903ec03ba5f72&type=notebook#/9AC3F6E6C5C2451BB84E2660B1226AA2</pre>
+
+                                <h3>博思问题汇总2</h3>
+                                <pre>https://note.youdao.com/ynoteshare1/index.html?id=544bb366bb80a3dc1d2903ec03ba5f72&type=notebook</pre>
+
+                                <h3>BASE64转码工具</h3>
+                                <pre>https://tool.oschina.net/encrypt?type=3</pre>
+
+                                <h3>ORA-03113报错</h3>
+                                <pre>https://www.cnblogs.com/kliine/p/9051102.html</pre>
+
+                                <h3>设置数据库编码</h3>
+                                <pre>https://www.linuxidc.com/Linux/2010-05/26036.htm</pre>
+
+                                <h3>linux服务器桌面化 xstart</h3>
+                                <pre>https://www.imooc.com/article/266563</pre>
+
+                                <pre>/usr/bin/gnome-session --display $DISPLAY</pre>
+
+                                <h3>Oracle 11G 调整内存启动后 报ORA-00844和ORA-00851的解决办法</h3>
+                                <pre><a href="http://mtw.so/65GbcE">http://mtw.so/65GbcE</a></pre>
+
+                                <h3>设置服务器时间</h3>
+<pre>1.date {查看目前本地的时间}
+2.hwclock --show {查看硬件的时间}
+3.如果硬件时间和系统时间不同，那就对硬件的时间进行修改
+4.hwclock --set --date '14-12-15 15:15:15' {设置硬件时间为14年12月15日15点15分15秒}
+5.hwclock --hctosys {设置系统时间和硬件时间同步}
+6.clock -w {保存时钟}</pre>
+
+<h3>-----------------------VNC可视化linux--------------------------------</h3>
+<pre>VNC远程连接CentOS7.6桌面|VNC如何连接CentOS
+1、	服务器端安装，需要安装有桌面（如：GNOME）。
+执行yum -y install vnc "vnc-server"，进行VnvServer安装
+2、	执行vncserver，启动VncServer。第一次启动要设置当前用户的密码，输入后，还要确认密码。确认后，会提示是否设置只读密码，这里不设置，避免意外
+3、	执行ll .vnc，可列出.vnc目录下创建的文件(可不执行)
+4、	执行ps -ef | grep vnc，可以看到当前用户已经启用了vncserver，默认连接端口为5901（可不执行）
+5、	客户端连接服务端，需要安装vnc客户端。这里本地也是CentOS7.6，执行yum install vnc进行VNC客户端安装
+6、	执行vncviewer，启动VNC客户端
+    接着会弹出个界面，输入服务端地址、端口。点击connect即可连接。
+7、	注：安装过VNC的，重启服务器后，只需要执行vncserver启动服务，然后输入vncviewer打开客户端即可(因为没有将vncserver添加成开机自启动，所以需要先启动服务)</pre>
+
+                                <h3>----------------------------服务器断电重启----------------------------</h3>
+<pre>进入BIOS设置
+进入Chipest
+进入 Miscellaneous Configuration
+    进入 Restore AC Power Loss 默认为last State状态 设置成 Power On</pre>
+
+                                <h3>方案2：</h3>
+                                <pre>芯片组-杂项配置-恢复AC掉电配置【开机】</pre>
+
+                                <h3>方案3：</h3>
+                                <pre>PCH Configuration---Restore AC Power Loss---设置成 Power On</pre>
+
+
+                                <h3>---------------------------无法从套接字读取--------------------------</h3>
+                                <h4>PSQL连接数据库</h4>
+                                <pre>select a.ksppinm name, b.ksppstvl value, a.ksppdesc description from x$ksppi a, x$ksppcv b where a.indx = b.indx and a.ksppinm = '_optimizer_join_elimination_enabled';</pre>
+                                <pre>设置false
+alter session set "_optimizer_join_elimination_enabled" =false;
+_optim_peek_user_binds = false</pre>
+                            </div>
+
+                            <!-- 右列 -->
+                            <div class="col-right">
+                                <h3>--------------------------重新签名数据提取-----------------------</h3>
+<pre>select *
+    from (select c.fbillname,
+    c.FBILLCODE,
+    a.fexternalid,
+    a.fbillbatchcode,
+    a.fbillno,
+    a.ftotalamt,
+    a.fauthor,
+    a.fpayername,
+    a.FDATE,
+    a.FCHECKCODE
+    from UNE_CBILL A
+    inner join FAB_BILL C
+    on a.FBILLID = c.FID
+    where c.finvoicemode = 1
+    and A.FBUSTYPE in ('1', '3', '4')
+    and A.FSTATE = '1'
+    and a.ftotalamt > 0
+    and a.FAGENIDCODE = '单位编码'
+    and not exists (select 1
+    from IBE_VOUCHER_STORAGE C
+where
+    C.FBILLBATCHCODE = A.fbillbatchcode
+    and C.FBILLNO = A.fbillno)
+    and A.FDATE >= '2021-04-01'
+    and A.FDATE <= '2021-05-10'
+    and A.FPLACECODE like '%'
+    order by a.FDATE desc, a.FBILLBATCHCODE asc, a.FBILLNO asc)</pre>
+
+<h3>--------------------------关键表--------------------------</h3>
+                                <pre>ibe_invoice_info_data</pre>
+
+<h3>--------------------------队列取票改数据库取票--------------------------</h3>
+                                <pre>select * from ubr_stock_section
+--队列取票修改为数据库取票后，ubr_stock_section票据回收
+--备注：必须先将取票模式改为数据库取票后，才可操作ubr_stock_section票据回收</pre>
+
+                                <h3>（备份）</h3>
+                                <pre>create table  ubr_stock_section_bak0816 as select * from   ubr_stock_section</pre>
+                                <h3>--1.将未使用票据插入主库存</h3>
+<pre>insert into ubr_stock (FID, FRGNCODE, FAGENIDCODE, FPLACEID, FBILLID, FBILLBATCHCODE, FBILLNO1, FBILLNO2, FVERSION, FALTERCODE, FCREATETIME, FUPDATETIME)
+select FID, FRGNCODE, FAGENIDCODE, FPLACEID, FBILLID, FBILLBATCHCODE, FBILLNO1, FBILLNO2, FVERSION, FALTERCODE, FCREATETIME, FUPDATETIME from ubr_stock_section;
+commit;</pre>
+                                <h3>--2.更新插入信息的版本号及优先取票号</h3>
+                                <pre>update ubr_stock set FVERSION = TICKET.NEXTVAL,FFETCHRANK = '0'  where fid in (select fid from ubr_stock_section);
+commit;</pre>
+
+<h3>--3.删除ubr_stock_section数据</h3>
+                                <pre>delete from ubr_stock_section;
+commit;</pre>
+
+<h3>--------------------------高校收费汇总无数据问题--------------------------</h3>
+<pre>1.打补丁
+2.查询或者删除
+3.执行调度任务[高校收费汇总]
+DELETE FROM ibe_writeoff_date where ftype='DAILY_ITEM';
+DELETE FROM ibe_summary_items;</pre>
+
+<pre>Insert into NONTAX_CONFIG =
+            (FKEY,
+            FSYSTEM,
+            FMODULE,
+            FNAME,
+            FVALUE,
+            FSORT,
+            FTYPE,
+            FREADONLY,
+            FNEEDREBOOT,
+            FOPTIONS,
+            FMEMO,
+            FISSYNC,
+            FUPDATETIME)
+Values ('AGEN_SEAL_MANAGE_MODE','006','001','印章','1',1,3,0,1,'1=通用模式,2=印章与票据挂接模式', '可改值--单位印章管理模式，1：通用模式，2：印章与票据挂接模式',0,'20191015042331495');
+COMMIT;</pre>
+
+<h3>--------------------------补发监制js脚本----------</h3>
+<pre>let buttons = $$(".el-table__fixed-body-wrapper > table:nth-child(1) > tbody:nth-child(2) > tr > td:nth-child(12) > div:nth-child(1) > button:nth-child(1)");//对应的所有的button css选择器
+                    var sleep = async (ms) => {
+                    return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                    resolve()
+                    }, ms)
+                    })
+                    };
+                    var app = async () => {
+                    for (const button of buttons) {
+                    await sleep(1000);
+                    button.click();
+                    }
+                    };
+                    app();
+                    setInterval(() => {
+                    app();
+                        }, buttons.length * 1000)</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<@common.commonScripts/>
+<script>
+    $(document).ready(function () {
+        $('.summernote').summernote({
+            lang: 'zh-CN'
+        });
+
+        // ===== 滚动时给固定栏添加阴影效果 =====
+        var $toolbar = $('.ibox-title');
+        var $window = $(window);
+        var offsetTop = $toolbar.offset().top;
+
+        $window.on('scroll', function() {
+            var scrollTop = $window.scrollTop();
+            if (scrollTop > offsetTop) {
+                $toolbar.addClass('scrolled');
+            } else {
+                $toolbar.removeClass('scrolled');
+            }
+        });
+
+        // ===== 窗口resize时重新计算偏移量 =====
+        $window.on('resize', function() {
+            offsetTop = $toolbar.offset().top;
+        });
+    });
+
+    var edit = function () {
+        $("#eg").addClass("no-padding");
+        $('.click2edit').summernote({
+            lang: 'zh-CN',
+            focus: true
+        });
+        // 编辑模式下，确保工具栏固定
+        setTimeout(function() {
+            $('.note-toolbar').css({
+                'position': 'sticky',
+                'top': '0',
+                'z-index': '1001',
+                'background': '#f7f9fa',
+                'border-bottom': '2px solid #e7eaec',
+                'box-shadow': '0 2px 8px rgba(0,0,0,0.08)'
+            });
+        }, 100);
+    };
+
+    var save = function () {
+        $("#eg").removeClass("no-padding");
+        var aHTML = $('.click2edit').summernote('code');
+        $('.click2edit').summernote('destroy');
+    };
+</script>
+</body>
+</html>

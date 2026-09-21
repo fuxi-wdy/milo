@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<#import "/common/common.html" as common>
+<html lang="zh">
+<head>
+    <@common.commonHead title="维护问题汇总"/>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <!-- ibox-title 固定顶部 -->
+                <!--<div class="ibox-title" id="fixedToolbar">
+                    <button id="edit" class="btn btn-primary btn-xs m-l-sm" onclick="edit()" type="button">编辑</button>
+                    <button id="save" class="btn btn-primary btn-xs" onclick="save()" type="button">保存</button>
+                </div>-->
+                <div class="ibox-content" id="eg">
+
+                    <div class="click2edit wrapper">
+                        <!-- 两列布局容器 -->
+                        <div class="two-column-wrapper">
+                            <!-- 左列 -->
+                            <div class="col-left">
+                                <pre>linux清空文件内容：cat /dev/null > 文件名</pre>
+
+                                <h3>------------自启动------------</h3>
+                                <h4>su - oracle</h4>
+                                <h4>vi /u01/app/oracle/product/11.2.0/dbhome_1/bin/dbstart</h4>
+                                <pre>修改：ORACLE_HOME_LISTNER=$ORACLE_HOME</pre>
+
+                                <h4>su - root</h4>
+                                <h4>vi /etc/oratab</h4>
+                                <pre>修改：orcl:/../../..dbhome_1:Y(N修改为Y)</pre>
+                                <p>------------------------------------------------</p>
+                                <h4>vim /etc/rc.d/rc.local</h4>
+                                <pre>su - oracle -lc "/opt/oracle/app/oracle/product/11.2.0/dbhome_1/bin/lsnrctl start"</pre>
+                                <pre>su - oracle -lc "/opt/oracle/app/oracle/product/11.2.0/dbhome_1/bin/dbstart"</pre>
+
+                                <pre>/opt/redis-3.2.9/bin/redis-server /opt/redis-3.2.9/conf/redis.conf</pre>
+                                <pre>/opt/zookeeper-3.4.6/bin/zkServer.sh start</pre>
+
+                                <pre>su - root -c "nohup /opt/oracle/middleware/user_projects/domains/base_domain/startWebLogic.sh > /dev/null &"</pre>
+
+
+                                <p>--------------------------------</p>
+                                <pre>chmod a+x /etc/init.d/weblogic</pre>
+                                <h4>添加为服务</h4>
+                                <pre>chkconfig --add weblogic</pre>
+                                <h4>查看是否添加成功</h4>
+                                <pre>chkconfig --list|grep weblogic</pre>
+                            </div>
+
+                            <!-- 右列 -->
+                            <div class="col-right">
+                                <h3>模板错误（执行后-重新同步）</h3>
+                                <pre>update nontax_sync_metadata_instance
+                                set F_CURRENT_CURSOR = '0'
+                                where F_METADATA_ID in
+                                (select F_ID
+                                from nontax_sync_metadata
+                                    where f_type in ('billTemplate','billTemplate.agencyFull','eleTemplate', 'platformData','fileInfo'));</pre>
+                                <h3>------------------3140模板同步失败-----------若未解决，多同步一次，清理redis,重启weblogic-----------------</h3>
+                                <pre>update nontax_sync_metadata_instance
+                                set F_CURRENT_CURSOR = '0'
+                                where F_METADATA_ID in
+                                (select F_ID
+                                from nontax_sync_metadata
+                                where f_type in ('billTemplate.agencyFull','billTemplate.agencyInc',
+                                    'billShowTemplateFile','fileInfo','eleTemplate','platformData'));</pre>
+
+
+
+                                <h3>----------------------3144测试环境无票据模板------------------------</h3>
+                                <pre>表：nontax_agency_sync_metadata
+                                <h4>添加3个字段:billShowTemplateFile、billTemplate.agencyInc、eleTemplate</h4></pre>
+
+                                <h3>------------------印章同步失败-------------</h3>
+                                <h4>1.修改版本号为 0</h4>
+                                <pre>select * from nontax_sync_metadata_instance n where n.f_metadata_id in ('agenSeal','fileInfo') for update;</pre>
+
+                                <pre>update nontax_sync_metadata_instance set F_CURRENT_CURSOR='0' where f_metadata_id in('agenSeal','fileInfo')</pre>
+
+                                <h4>2.清理redis缓存</h4>
+                                <h4>3.全部同步一次</h4>
+                                <h4>4.可以查看数据库是否有章</h4>
+                                <pre>SELECT t.fid,t.frgnCode,t.fagenIdCode,t.fagenCode,t.fagenName,t.fsealName,t.fversion,t.falterCode,
+                                t.fcreateTime,stores.content AS fcontent, t.fisDefault, t.fbillId, t.fsealId
+                                FROM FAB_AGEN_SEAL t
+                                LEFT JOIN AFA_ATTACH_FILEINFO info ON info.bizid = t.fid
+                                    LEFT JOIN AFA_ATTACH_FILESTORE stores ON stores.id = info.filepath</pre>
+
+                                <h3>------修改密码--------</h3>
+                                <pre>select * from afa_user</pre>
+                                <pre>账号：Boss@123  密码： 071d1279f2851251b28f96964c7d3faf</pre>
+
+
+                                <h3>---------------日期格式------接口需要重新授权--------</h3>
+                                <pre>select z.fapicode,z.fapiname,zz.* from ibb_api_parame zz
+                                left join ibb_api z
+                                on zz.fapiid = z.fid
+                                where zz.fcode in ( 'consultationDate','inHospitalDate','outHospitalDate')
+                                and z.fapicode = 'invoiceMedicalEBill'
+                                left join ibb_api z
+                                on zz.fapiid = z.fid
+                                where zz.fcode in ( 'consultationDate','inHospitalDate','outHospitalDate')
+                                and z.fapicode = 'invoiceMedicalEBill'</pre>
+
+                                <h3>修改</h3>
+                                <pre>update ibb_api_parame zz set zz.fformat = 'yyyy-MM-dd',zz.flength = '10'
+                                where zz.fcode in ( 'consultationDate','inHospitalDate','outHospitalDate')
+                                and zz.fapiid = '5b32334215fd4182b04a686fd419b908'
+                                where zz.fcode in ( 'consultationDate','inHospitalDate','outHospitalDate')
+                                and zz.fapiid = '5b32334215fd4182b04a686fd419b908'</pre>
+
+                                <h3>-----------------无上报按钮---------------------</h3>
+                                <h4>请通过以下语句查下结果，如无结果，更新UNE_COLLECT表中核销单的字段 FSTATE = '1'</h4>
+                                <pre>SELECT * FROM UNE_COLLECT WHERE 1 = 1  AND (FSYNCSTATE IS NULL OR FSYNCSTATE = '' OR FSYNCSTATE = '0') AND FSTATE = '1' ORDER BY FVERSION</pre>
+
+                                <h3>------------------高校数据上报------------------------------</h3>
+                                <pre>应缴款显示有问题：une_collect</pre>
+                                <h3>--------------------票据代码过期--------------------------</h3>
+                                <pre>FAB_BILLBATCH</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<@common.commonScripts />
+<script>
+    $(document).ready(function () {
+        $('.summernote').summernote({
+            lang: 'zh-CN'
+        });
+
+        // ===== 滚动时给固定栏添加阴影效果 =====
+        var $toolbar = $('.ibox-title');
+        var $window = $(window);
+        var offsetTop = $toolbar.offset().top;
+
+        $window.on('scroll', function() {
+            var scrollTop = $window.scrollTop();
+            if (scrollTop > offsetTop) {
+                $toolbar.addClass('scrolled');
+            } else {
+                $toolbar.removeClass('scrolled');
+            }
+        });
+
+        // ===== 窗口resize时重新计算偏移量 =====
+        $window.on('resize', function() {
+            offsetTop = $toolbar.offset().top;
+        });
+    });
+
+    var edit = function () {
+        $("#eg").addClass("no-padding");
+        $('.click2edit').summernote({
+            lang: 'zh-CN',
+            focus: true
+        });
+        // 编辑模式下，确保工具栏固定
+        setTimeout(function() {
+            $('.note-toolbar').css({
+                'position': 'sticky',
+                'top': '0',
+                'z-index': '1001',
+                'background': '#f7f9fa',
+                'border-bottom': '2px solid #e7eaec',
+                'box-shadow': '0 2px 8px rgba(0,0,0,0.08)'
+            });
+        }, 100);
+    };
+
+    var save = function () {
+        $("#eg").removeClass("no-padding");
+        var aHTML = $('.click2edit').summernote('code');
+        $('.click2edit').summernote('destroy');
+    };
+</script>
+</body>
+</html>

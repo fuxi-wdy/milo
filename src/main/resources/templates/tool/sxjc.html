@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<#import "/common/common.html" as common>
+<html lang="zh">
+<head>
+    <@common.commonHead title="上线检查"/>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <!-- ibox-title 固定顶部 -->
+               <!-- <div class="ibox-title" id="fixedToolbar">
+                    <button id="edit" class="btn btn-primary btn-xs m-l-sm" onclick="edit()" type="button">编辑</button>
+                    <button id="save" class="btn btn-primary btn-xs" onclick="save()" type="button">保存</button>
+                </div>-->
+                <div class="ibox-content" id="eg">
+
+                    <div class="click2edit wrapper">
+                        <!-- 两列布局容器 -->
+                        <div class="two-column-wrapper">
+                            <!-- 左列 -->
+                            <div class="col-left">
+                                <h3>1.是否启用秒级制票【关闭】</h3>
+
+                                <h3>2.H5页面版本号---【2.0版本】</h3>
+
+                                <h3>3.电子档案下载类型-----【PDF】</h3>
+
+                                <h3>4.是否开启医保总金额等于票面总金额判断----医院需开启，卫生院暂不开启</h3>
+
+                                <h3>5.是否开启清单明细项按收费项目大项编码分组排序----【开启】</h3>
+
+                                <h3>6.住院4012扩展字段----住院日期 删除“至”</h3>
+
+                                <h3>7.非税4003扩展字段----初始化idCardNo 对应 creditCode组织机构代码</h3>
+
+                                <h3>8.关闭weblogic控制台、weblogic打补丁</h3>
+
+                                <h3>9.优化weblogic、优化数据库连接池</h3>
+
+                                <h3>10.weblogic、oracle、文件服务器、配置自启动</h3>
+
+                                <h3>11.处理数据库密码过期</h3>
+
+                                <h3>12.接口开票检查归档、小程序、文件服务器是否有数据</h3>
+
+                            </div>
+
+                            <!-- 右列 -->
+                            <div class="col-right">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<@common.commonScripts />
+<script>
+    $(document).ready(function () {
+        $('.summernote').summernote({
+            lang: 'zh-CN'
+        });
+
+        // ===== 滚动时给固定栏添加阴影效果 =====
+        var $toolbar = $('.ibox-title');
+        var $window = $(window);
+        var offsetTop = $toolbar.offset().top;
+
+        $window.on('scroll', function() {
+            var scrollTop = $window.scrollTop();
+            if (scrollTop > offsetTop) {
+                $toolbar.addClass('scrolled');
+            } else {
+                $toolbar.removeClass('scrolled');
+            }
+        });
+
+        // ===== 窗口resize时重新计算偏移量 =====
+        $window.on('resize', function() {
+            offsetTop = $toolbar.offset().top;
+        });
+    });
+
+    var edit = function () {
+        $("#eg").addClass("no-padding");
+        $('.click2edit').summernote({
+            lang: 'zh-CN',
+            focus: true
+        });
+        // 编辑模式下，确保工具栏固定
+        setTimeout(function() {
+            $('.note-toolbar').css({
+                'position': 'sticky',
+                'top': '0',
+                'z-index': '1001',
+                'background': '#f7f9fa',
+                'border-bottom': '2px solid #e7eaec',
+                'box-shadow': '0 2px 8px rgba(0,0,0,0.08)'
+            });
+        }, 100);
+    };
+
+    var save = function () {
+        $("#eg").removeClass("no-padding");
+        var aHTML = $('.click2edit').summernote('code');
+        $('.click2edit').summernote('destroy');
+    };
+</script>
+</body>
+</html>

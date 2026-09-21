@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<#import "/common/common.html" as common>
+<html lang="zh">
+<head>
+    <@common.commonHead title="其他医疗"/>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <!-- ibox-title 固定顶部 -->
+                <!--<div class="ibox-title" id="fixedToolbar">
+                    <button id="edit" class="btn btn-primary btn-xs m-l-sm" onclick="edit()" type="button">编辑</button>
+                    <button id="save" class="btn btn-primary btn-xs" onclick="save()" type="button">保存</button>
+                </div>-->
+                <div class="ibox-content" id="eg">
+
+                    <div class="click2edit wrapper">
+                        <!-- 两列布局容器 -->
+                        <div class="two-column-wrapper">
+                            <!-- 左列 -->
+                            <div class="col-left">
+                                <h3>------------查看agenidcode值------</h3>
+                                <pre>select * from fab_agen;</pre>
+                                <h3>------------单位执行器-----------</h3>
+                                <pre>BOS_QRTZ_TRIGGER_REGISTRY</pre>
+
+                               <h3> ------------查看更新脚本---------</h3>
+                                <pre>select * from nontax_schema_version;</pre>
+
+                                <h3> ------------单位表---------</h3>
+                                <pre>select * from NONTAX_AGENCY_INIT_CONFIG;</pre>
+
+                                <h3> -----------------相关表----------------</h3>
+                                <pre>明细表：une_cbill</pre>
+                                <pre>--文件服务器备份路径：BILL_SAFE_FIN_BILL</pre>
+                                <h3> ------------归档表---------</h3>
+                                <pre>FVR_VOUCHERSUMMARY;
+FVE_VOUCHERSTORAGE;
+IBE_VOUCHER_STORAGE;
+IBE_VOUCHER_STORAGE_DETAIL;</pre>
+                                <h3> ------------制票信息表---------</h3>
+                                <pre>une_cbill_cloud;
+UAA_PENDING_EINVOICE;</pre>
+                                <h3>--单位初始化配置表</h3>
+                                <pre>select * from Nontax_Agency_Init_Config;</pre>
+                                <h3>--行业小程序发送失败记录表</h3>
+                                <pre>select * from ibe_einvoice_error_data</pre>
+                                <h3>--同步数据配置表</h3>
+                                <pre>select * from UAA_SYNC_CONFIG;</pre>
+                                <h3>--行业的邮件通知的日志表</h3>
+                                <pre>select * from ibe_notice_msg;</pre>
+                                <h3>--行业归档记录表</h3>
+                                <pre>select * from fva_voucherpaymentorgconfig;（3127以下）</pre>
+                                <pre>select * from ibe_voucher_archive_version;（3217及以上）</pre>
+                                <h3>--行业归档表</h3>
+                                <pre>select * from fve_voucherstorage;（3217以下）</pre>
+                                <pre>select * from ibe_voucher_storage;（3127及以上）</pre>
+                                <h3>--秒级制票记录表</h3>
+                                <pre>select * from UAA_PENDING_EINVOICE;</pre>
+                                <h3>--票据使用表</h3>
+                                <pre>select * from unr_bill_used;</pre>
+                                <h3>--电子票日结记录表</h3>
+                                <pre>select * from unr_daily_ebill;</pre>
+                                <h3>--纸质票日结记录表</h3>
+                                <pre>select * from unr_daily_pbill;</pre>
+                                <h3>--调度日志表</h3>
+                                <pre>select * from BOS_QRTZ_TRIGGER_LOG；</pre>
+                                <h3>--行业产品配置表</h3>
+                                <pre>select * from nontax_config;</pre>
+                                <h3>--数据库升级记录表</h3>
+                                <pre>select * from nontax_schema_version;</pre>
+                                <h3>--医疗行业开具电子票据业务数据主信息表</h3>
+                                <pre>select * from ibe_his_info;</pre>
+                                <h3>--医疗业务数据项目明细表</h3>
+                                <pre>select * from ibe_his_info_item;</pre>
+                                <h3>--医疗业务数据项目清单表</h3>
+                                <pre>select * from ibe_his_info_list;</pre>
+                                <h3>--行业-业务票据信息表</h3>
+                                <pre>select * from ibe_bus_bill_info;</pre>
+                                <h3>--通用行业-业务信息主表</h3>
+                                <pre>select * from ibe_busdata;</pre>
+                                <h3>--高校票据使用表</h3>
+                                <pre>select * from fne_colleges_bill_info;</pre>
+                                <h3>--高校业务表</h3>
+                                <pre>select * from fne_colleges_busdata;</pre>
+                                <pre>select * from fne_colleges_busdata_item;</pre>
+                                <h3>--程序版本号记录表</h3>
+                                SELECT * FROM IBE_VERSION_SHEET;
+                                <h3>--自动申领明细表</h3>
+                                <pre>select * from nontax_autoallot_apply_item;</pre>
+                                <h3>--行业数据库版本记录表（3125以上版本）</h3>
+                                SELECT * FROM IBE_VERSION_SHEET;
+                                <h3>--行业推送票据云版本记录表</h3>
+                                SELECT * FROM ibr_job_cloud_balance;
+                                <h3>--行业反算版本记录表</h3>
+                                <pre>select * from IBE_SYNC_METADATA_INSTANCE;</pre>
+                                <pre>select * from IBE_SYNC_METADATA;</pre>
+                                <pre>select * from inverse_operat_record;</pre>
+                                <h3>--单位应用表</h3>
+                                <pre>SELECT * FROM IBB_BASIC_APPINFO;</pre>
+                                <h3>--单位欠缴情况表</h3>
+                                <pre>select * from ibe_his_arrears;</pre>
+                                <h3>--h5转码表</h3>
+                                <pre>select * from IBB_URL_TRANS_INFO;</pre>
+                                <h3>--单位欠缴表</h3>
+                                <pre>select * from unr_unpaid_detail;</pre>
+                                <pre>select * from unr_unpaid;</pre>
+                                <h3>--单位应缴表</h3>
+                                <pre>select * from unr_payable;</pre>
+                                <h3>--前台开票模板表</h3>
+                                <pre>select * from ibb_openbill_template</pre>
+                                <h3>--开票时序表</h3>
+                                <pre>select * from une_cbill_firstinvoice</pre>
+                                <h3>--医疗业务类型与票据对应关系</h3>
+                                <pre>select * from ibb_basic_bustype_bill</pre>
+                            </div>
+
+                            <!-- 右列 -->
+                            <div class="col-right">
+                                <h3>--秒级制票：</h3>
+                                <pre>select c_bill_sign_content as 签名原文, t.* from UAA_PENDING_EINVOICE t
+where c_bill_id = (select fid from une_cbill where fbillbatchcode = '51060120'and fbillno = '0000087299');</pre>
+                                <h3>--制票失败解决方案</h3>
+                                <pre>update UAA_PENDING_EINVOICE t set c_bill_sign_content = c_bill_sign_content_old where c_bill_sign_content is null and completed='0';</pre>
+
+                                <h3>----------时间格式------------</h3>
+                                <pre>select z.fapicode,z.fapiname,zz.* from ibb_api_parame zz
+                                left join ibb_api z
+                                on zz.fapiid = z.fid
+                                where zz.fcode in ( 'consultationDate','inHospitalDate','outHospitalDate')
+                                    and z.fapicode = 'invoiceMedicalEBill'</pre>
+                                <h3>修改</h3>
+                                <pre>update ibb_api_parame zz set zz.fformat = 'yyyy-MM-dd',zz.flength = '10'
+                                where zz.fcode in ( 'consultationDate','inHospitalDate','outHospitalDate')
+                                and zz.fapiid = '5b32334215fd4182b04a686fd419b908';</pre>
+
+                                <h3>-----------修改cardNo长度------------</h3>
+                                <pre>update ibb_api_parame set flength='100' where fcode='cardNo';
+alter table ibe_his_info modify fcardno VARCHAR2(100);</pre>
+                                <h3>---------------卡归档任务-----------------</h3>
+                                <h4>修改日期版本号、清空redis缓存、重启服务</h4>
+                                <pre>select * from ibe_voucher_archive_version</pre>
+                                <h3>----------------------------------------------------安装NGINX------------------------------------------------------------------</h3>
+                                <h3>【操作解析】</h3>
+                               <pre>https://www.jb51.net/article/251377.htm</pre>
+                                <pre>安装gcc、安装g++
+上传使用离线包
+rpm -Uvh *.rpm --nodeps --force
+cd pcre-8.35
+./configure
+make
+make install</pre>
+
+                                <h3>解压ng</h3>
+<pre>tar -zxvf nginx
+进入目录执行
+./configure  --prefix=/home/nginx
+安装
+make
+make install
+进入目录
+cd /home/nginx/sbin
+启动
+./nginx
+修改配置文件
+vim /home/nginx/conf/nginx.conf
+
+worker_processes  4;
+events {
+worker_connections  5120;
+}
+
+upstream medical{
+server IP1:端口;
+server IP2:端口;
+}
+
+server{
+listen 17001;
+server_name localhost;
+}
+
+location / {
+proxy_pass http://medical;添加
+}
+
+重启ng
+./nginx -s reload</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<@common.commonScripts />
+<script>
+    $(document).ready(function () {
+        $('.summernote').summernote({
+            lang: 'zh-CN'
+        });
+
+        // ===== 滚动时给固定栏添加阴影效果 =====
+        var $toolbar = $('.ibox-title');
+        var $window = $(window);
+        var offsetTop = $toolbar.offset().top;
+
+        $window.on('scroll', function() {
+            var scrollTop = $window.scrollTop();
+            if (scrollTop > offsetTop) {
+                $toolbar.addClass('scrolled');
+            } else {
+                $toolbar.removeClass('scrolled');
+            }
+        });
+
+        // ===== 窗口resize时重新计算偏移量 =====
+        $window.on('resize', function() {
+            offsetTop = $toolbar.offset().top;
+        });
+    });
+
+    var edit = function () {
+        $("#eg").addClass("no-padding");
+        $('.click2edit').summernote({
+            lang: 'zh-CN',
+            focus: true
+        });
+        // 编辑模式下，确保工具栏固定
+        setTimeout(function() {
+            $('.note-toolbar').css({
+                'position': 'sticky',
+                'top': '0',
+                'z-index': '1001',
+                'background': '#f7f9fa',
+                'border-bottom': '2px solid #e7eaec',
+                'box-shadow': '0 2px 8px rgba(0,0,0,0.08)'
+            });
+        }, 100);
+    };
+
+    var save = function () {
+        $("#eg").removeClass("no-padding");
+        var aHTML = $('.click2edit').summernote('code');
+        $('.click2edit').summernote('destroy');
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,365 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+  background: #f6f9fc;
+  padding: 2rem 1.5rem;
+  color: #1e293b;
+}
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+  padding: 2rem 1.8rem 2.8rem;
+}
+h1 {
+  font-weight: 600;
+  font-size: 1.8rem;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 0.2rem;
+}
+.subhead {
+  color: #64748b;
+  font-size: 0.95rem;
+  border-left: 3px solid #3b82f6;
+  padding-left: 16px;
+  margin-bottom: 2rem;
+  background: #f8fafc;
+  border-radius: 0 12px 12px 0;
+  line-height: 1.5;
+}
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.8rem;
+  gap: 12px;
+}
+.badge {
+  background: #eef2ff;
+  color: #1e4bd2;
+  padding: 0.4rem 1rem;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.badge i {
+  font-style: normal;
+  background: #3b82f6;
+  color: white;
+  border-radius: 20px;
+  padding: 0 8px;
+  font-size: 0.7rem;
+  line-height: 1.6;
+}
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 16px;
+  border: 1px solid #e9edf2;
+  background: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.15rem; /* 基础字体再次调大 */
+  min-width: 680px;
+}
+th {
+  text-align: left;
+  padding: 0.9rem 1rem;
+  background: #f1f5f9;
+  color: #1e293b;
+  font-weight: 600;
+  border-bottom: 2px solid #dce2eb;
+  white-space: nowrap;
+  font-size: 1.15rem;
+}
+td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #eef2f6;
+  vertical-align: top;
+  font-size: 1.1rem; /* 单元格字体加大 */
+}
+tr:last-child td {
+  border-bottom: none;
+}
+.city-row {
+  background: #fafcff;
+  font-weight: 500;
+}
+.city-row td:first-child {
+  background: #f1f6fd;
+  font-weight: 600;
+}
+.district-tag {
+  display: inline-block;
+  background: #f1f4f9;
+  padding: 0.25rem 0.9rem;
+  border-radius: 20px;
+  font-size: 1.05rem; /* 标签字体调大 */
+  color: #1e293b;
+  margin: 0.15rem 0.2rem 0.15rem 0;
+  white-space: nowrap;
+  border: 1px solid #e2e8f0;
+}
+.district-tag code {
+  background: transparent;
+  color: #475569;
+  font-size: 0.95rem; /* code 字体调大 */
+  margin-left: 6px;
+  font-weight: 400;
+}
+.district-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 2px;
+}
+.empty-state {
+  padding: 2.8rem 1rem;
+  text-align: center;
+  color: #94a3b8;
+  font-style: italic;
+  font-size: 1.1rem;
+}
+.footer-note {
+  margin-top: 1.8rem;
+  color: #64748b;
+  font-size: 0.8rem;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #eef2f6;
+  padding-top: 1.5rem;
+}
+.footer-note span {
+  background: #f1f5f9;
+  padding: 0.2rem 1rem;
+  border-radius: 30px;
+}
+.controller-sim {
+  background: #f1f5f9;
+  padding: 0.3rem 1.2rem;
+  border-radius: 30px;
+  font-size: 0.9rem; /* 稍大 */
+  color: #1e293b;
+  border: 1px dashed #b9c7da;
+}
+@media (max-width: 700px) {
+  .container { padding: 1.2rem; }
+  h1 { font-size: 1.4rem; }
+}
+
+
+/* 左列：占 32% 宽度（原来默认 flex:1 均分） */
+.two-column-wrapper .col-left {
+  flex: 0 0 50%; /* 不伸缩，固定各占一半 */
+  max-width: 50%;
+}
+/* 右列：占剩余宽度（68%） */
+.two-column-wrapper .col-right {
+  flex: 0 0 50%; /* 不伸缩，固定各占一半 */
+  max-width: 50%;
+}
+
+/* 保持原有内容样式 */
+.click2edit h3 {
+  margin-top: 18px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #1a3c6e;
+}
+.click2edit p {
+  margin-bottom: 6px;
+  line-height: 1.7;
+  color: #333;
+}
+.click2edit .highlight {
+  color: #c7254e;
+  background: #f9f2f4;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 13px;
+}
+.click2edit .section-title {
+  border-left: 4px solid #1a84c6;
+  padding-left: 12px;
+  margin-top: 24px;
+  margin-bottom: 14px;
+  font-weight: 600;
+  color: #1a3c6e;
+  font-size: 16px;
+}
+/* Summernote 编辑模式下保持两列比例 */
+.note-editor .two-column-wrapper {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 30px !important;
+}
+.note-editor .two-column-wrapper .col-left {
+  flex: 0 0 32% !important;
+  min-width: 240px !important;
+  max-width: 420px !important;
+}
+.note-editor .two-column-wrapper .col-right {
+  flex: 1 1 0% !important;
+  min-width: 320px !important;
+}
+
+/* 响应式：小屏幕时变为上下排列，左列恢复全宽 */
+@media (max-width: 820px) {
+  .two-column-wrapper {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .two-column-wrapper .col-left,
+  .two-column-wrapper .col-right {
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+/* ===== 冻结顶部工具栏样式 ===== */
+.ibox-title-fixed {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #f7f9fa;
+  border-bottom: 2px solid #e7eaec;
+  padding: 10px 15px;
+  margin: -1px -1px 0 -1px;
+  border-radius: 4px 4px 0 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+.ibox.float-e-margins {
+  position: relative;
+}
+.ibox-title {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: #f7f9fa;
+  border-bottom: 2px solid #e7eaec;
+  border-radius: 4px 4px 0 0;
+  padding: 10px 15px;
+  margin: -1px -1px 0 -1px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+.note-toolbar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1001 !important;
+  background: #f7f9fa !important;
+  border-bottom: 2px solid #e7eaec !important;
+  padding: 8px 10px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+}
+.note-editor.note-frame {
+  margin-top: 0 !important;
+}
+#eg.no-padding {
+  padding: 0 !important;
+}
+#eg.no-padding .ibox-title {
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+.ibox-title .btn {
+  position: relative;
+  z-index: 1002;
+}
+.ibox-title.scrolled {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  border-bottom-color: #1a84c6;
+}
+.ibox-content {
+  padding-top: 20px;
+}
+.note-editor .note-toolbar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1001 !important;
+}
+.note-editor .ibox-title {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important;
+}
+.note-editor.note-frame .note-editing-area {
+  padding-top: 5px;
+}
+.note-editor.fullscreen .note-toolbar {
+  top: 0 !important;
+}
+.note-editor.fullscreen .ibox-title {
+  display: none !important;
+}
+
+/* 左列中的 pre 标签自动换行，防止溢出 */
+.col-left pre {
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-size: 12px;
+  background: #f4f7fc;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #e9edf2;
+  margin: 4px 0;
+}
+.col-left h3 {
+  font-size: 14px;
+  margin-top: 14px;
+  margin-bottom: 6px;
+}
+.col-left p {
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+/* 右列表格字体再次加大 (覆盖) */
+.col-right .table-wrapper table {
+  font-size: 1.25rem;
+}
+.col-right .table-wrapper th {
+  font-size: 1.25rem;
+}
+.col-right .table-wrapper td {
+  font-size: 1.2rem;
+}
+.col-right .district-tag {
+  font-size: 1.15rem;
+  padding: 0.25rem 1rem;
+}
+.col-right .district-tag code {
+  font-size: 1.55rem;
+}
+.col-right .badge {
+  font-size: 1rem;
+}
+.col-right .subhead {
+  font-size: 1.05rem;
+}
+.col-right .controller-sim {
+  font-size: 1rem;
+}
+.col-right .footer-note {
+  font-size: 0.95rem;
+}
+.col-right .empty-state {
+  font-size: 1.2rem;
+}

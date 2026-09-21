@@ -1,0 +1,35 @@
+.search-box {
+	position: relative;
+	display: inline-block;
+}
+.search-box input {
+	/* 如需固定输入框宽度，可取消下面注释 */
+	/* width: 180px; */
+}
+.dropdown-list {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	width: 100%;
+	min-width: 160px;
+	max-height: 220px;
+	overflow-y: auto;
+	background: #fff;
+	border: 1px solid #e0e0e0;
+	border-top: none;
+	z-index: 9999;
+	display: none;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+.dropdown-list .dropdown-item {
+	padding: 7px 12px;
+	cursor: pointer;
+	font-size: 13px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.dropdown-list .dropdown-item:hover {
+	background: #f0f7ff;
+	color: #1e9fff;
+}

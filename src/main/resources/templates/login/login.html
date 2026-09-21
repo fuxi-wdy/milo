@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>登录 · Milo管理系统</title>
+    <meta name="description" content="Milo票据资料管理平台" />
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="shortcut icon" href="/favicon.ico"/>
+    <!-- 保留原有依赖库（功能所需） -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/css/font-awesome.min.css" rel="stylesheet"/>
+    <link href="/css/style.min.css" rel="stylesheet"/>
+    <link href="/ruoyi/css/ry-ui.css" rel="stylesheet"/>
+    <style>
+        :root {
+            --cyan: #22d3ee;
+            --violet: #8b5cf6;
+            --magenta: #f472b6;
+            --bg: #05060f;
+            --card: rgba(13, 18, 38, 0.72);
+            --line: rgba(120, 160, 255, 0.22);
+            --text: #e6f1ff;
+            --muted: #8ea0c0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body { height: 100%; }
+
+        body {
+            font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+            display: grid;
+            place-items: center;
+        }
+
+        /* 背景层 */
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            background-image:
+                    linear-gradient(rgba(70, 120, 255, 0.09) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(70, 120, 255, 0.09) 1px, transparent 1px);
+            background-size: 42px 42px;
+            -webkit-mask-image: radial-gradient(ellipse at center, #000 20%, transparent 78%);
+            mask-image: radial-gradient(ellipse at center, #000 20%, transparent 78%);
+            animation: gridShift 18s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes gridShift {
+            from { background-position: 0 0, 0 0; }
+            to { background-position: 42px 42px, 42px 42px; }
+        }
+
+        .orb {
+            position: fixed;
+            width: 46vmax;
+            height: 46vmax;
+            border-radius: 50%;
+            filter: blur(110px);
+            opacity: 0.45;
+            animation: float 16s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .orb.a { top: -18vmax; left: -12vmax; background: var(--violet); }
+        .orb.b { bottom: -20vmax; right: -10vmax; background: var(--cyan); animation-delay: -8s; }
+
+        @keyframes float {
+            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+            50% { transform: translate3d(4vmax, -3vmax, 0) scale(1.12); }
+        }
+
+        canvas { position: fixed; inset: 0; z-index: 0; }
+
+        /* 扫描线 */
+        .scanline {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            background: repeating-linear-gradient(
+                    to bottom,
+                    transparent 0 2px,
+                    rgba(255, 255, 255, 0.015) 2px 4px
+            );
+            pointer-events: none;
+        }
+
+        /* 登录卡片 */
+        .login {
+            position: relative;
+            z-index: 2;
+            width: min(440px, calc(100vw - 40px));
+            padding: 40px 40px 32px;
+            border-radius: 20px;
+            background: var(--card);
+            border: 1px solid var(--line);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255,255,255,0.08);
+            animation: rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(24px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .login::before {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(135deg, var(--cyan), transparent 40%, transparent 60%, var(--violet));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        /* 品牌区 */
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            box-shadow: 0 0 24px rgba(34, 211, 238, 0.45);
+            font-weight: 800;
+            font-size: 18px;
+            letter-spacing: 0.5px;
+            color: #041018;
+        }
+
+        .brand h4 {
+            font-size: 22px;
+            letter-spacing: 3px;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(90deg, #fff, var(--cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .brand p {
+            color: var(--muted);
+            font-size: 12px;
+            letter-spacing: 2px;
+            margin-top: 2px;
+            margin-bottom: 0;
+        }
+
+        .glow-line {
+            height: 2px;
+            width: 50px;
+            background: linear-gradient(90deg, var(--cyan), rgba(34, 211, 238, 0.1));
+            margin-top: 4px;
+            border-radius: 4px;
+        }
+
+        /* 输入字段 */
+        .field { margin-bottom: 18px; }
+
+        .field label {
+            display: block;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .control {
+            position: relative;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(120, 160, 255, 0.25);
+            border-radius: 12px;
+            background: rgba(6, 10, 24, 0.55);
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+
+        .control:focus-within {
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15), 0 0 20px rgba(34, 211, 238, 0.25);
+        }
+
+        .control .icon { padding-left: 14px; color: var(--muted); font-size: 16px; }
+
+        .control input {
+            flex: 1;
+            min-width: 0;
+            padding: 13px 12px;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text);
+            font-size: 15px;
+            height: auto;
+            box-shadow: none;
+        }
+
+        .control input::placeholder { color: #4a5a78; }
+
+        .control input:focus {
+            box-shadow: none;
+        }
+
+        .toggle {
+            border: none;
+            background: transparent;
+            color: var(--muted);
+            padding: 0 14px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+        .toggle:hover { color: var(--cyan); }
+
+        /* 验证码行 */
+        .captcha-row {
+            display: flex;
+            align-items: stretch;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .captcha-row .captcha-input-wrap {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .captcha-row .captcha-input-wrap .control {
+            height: 100%;
+        }
+
+        .captcha-row .captcha-input-wrap .control input {
+            padding: 13px 12px;
+        }
+
+        .captcha-img-wrap {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 128px;
+            height: 48px;
+            border-radius: 12px;
+            border: 1px solid rgba(120, 160, 255, 0.25);
+            background: rgba(255, 255, 255, 0.9);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .captcha-img-wrap:hover {
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.25);
+        }
+
+        .captcha-img-wrap .imgcode {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            padding: 0;
+            margin: 0;
+            border-radius: 0 !important;
+        }
+
+        /* 错误信息 */
+        .error-container {
+            min-height: 30px;
+            margin-bottom: 6px;
+        }
+
+        .login-error-msg {
+            color: #fb7185 !important;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 4px 0 2px 4px;
+            display: block;
+            text-align: center;
+            letter-spacing: 0.5px;
+            border-radius: 8px;
+            min-height: 22px;
+            transition: all 0.2s ease;
+            text-shadow: 0 0 12px rgba(251, 113, 133, 0.4);
+        }
+
+        .layer-message {
+            display: none !important;
+        }
+
+        /* 登录按钮 */
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: #041018;
+            cursor: pointer;
+            background: linear-gradient(90deg, var(--cyan), var(--violet));
+            background-size: 200% 100%;
+            transition: transform 0.2s, box-shadow 0.25s, background-position 0.4s;
+            position: relative;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            background-position: 100% 0;
+            box-shadow: 0 12px 30px rgba(34, 211, 238, 0.35);
+            color: #041018;
+        }
+
+        .btn-login:active { transform: translateY(0); }
+        .btn-login:disabled { opacity: 0.75; cursor: wait; }
+
+        .btn-login .spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(4, 16, 24, 0.35);
+            border-top-color: #041018;
+            border-radius: 50%;
+            margin: 0 auto;
+            animation: spin 0.7s linear infinite;
+        }
+
+        .btn-login.loading span { display: none; }
+        .btn-login.loading .spinner { display: block; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Footer */
+        .foot {
+            margin-top: 26px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--muted);
+            letter-spacing: 1px;
+            border-top: 1px solid rgba(120, 160, 255, 0.08);
+            padding-top: 18px;
+        }
+
+        .foot .pull-left {
+            float: none !important;
+            color: var(--muted);
+        }
+
+        .foot br { display: none; }
+
+        /* 响应式 */
+        @media (max-width: 480px) {
+            .login {
+                padding: 28px 20px 24px;
+                border-radius: 16px;
+            }
+            .brand h4 { font-size: 18px; }
+            .captcha-row { gap: 10px; }
+            .captcha-img-wrap { width: 108px; }
+        }
+    </style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="orb a"></div>
+<div class="orb b"></div>
+<canvas id="net"></canvas>
+<div class="scanline"></div>
+
+<main class="login">
+    <!-- 品牌区域 -->
+    <div class="brand">
+        <div class="logo"><i class="fa fa-file-text-o"></i></div>
+        <div>
+            <h4>Milo · 管理系统</h4>
+            <p>资料管理平台</p>
+            <div class="glow-line"></div>
+        </div>
+    </div>
+
+    <div id="signupForm" autocomplete="off">
+        <!-- 用户名 -->
+        <div class="field">
+            <label for="userCode">用户名 / 工号</label>
+            <div class="control">
+                <span class="icon">⌁</span>
+                <input type="text" id="userCode" name="userCode" placeholder="请输入用户名 / 工号" value="1101" autocomplete="off" />
+            </div>
+        </div>
+
+        <!-- 密码 -->
+        <div class="field">
+            <label for="userPwd">密码</label>
+            <div class="control">
+                <span class="icon">◇</span>
+                <input type="password" id="userPwd" name="userPwd" placeholder="请输入密码" value="" autocomplete="off" />
+                <button type="button" class="toggle" id="eye" title="显示/隐藏密码">◉</button>
+            </div>
+        </div>
+
+        <!-- 验证码 -->
+        <div class="field">
+            <label for="captcha">验证码</label>
+            <div class="captcha-row">
+                <div class="captcha-input-wrap">
+                    <div class="control">
+                        <span class="icon">❏</span>
+                        <input type="text" name="captcha" id="captcha" placeholder="请输入验证码" maxlength="5" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="captcha-img-wrap">
+                    <img src="/captchaImage?type=math" class="imgcode" alt="验证码" title="点击更换验证码" onclick="refreshCaptcha()" />
+                </div>
+            </div>
+        </div>
+
+        <!-- 错误信息容器 -->
+        <div id="loginErrorContainer" class="error-container">
+            <span id="loginErrorMsg" class="login-error-msg"></span>
+        </div>
+
+        <div class="checkbox-custom" style="display:none;"></div>
+
+        <button class="btn-login" id="btnSubmit" onclick="login()" data-loading="正在验证登录，请稍候...">
+            <span><i class="fa fa-lock" style="margin-right: 10px; opacity: 0.8;"></i> 安全登录</span>
+            <span class="spinner"></span>
+        </button>
+    </div>
+
+    <p class="foot">
+        <span class="pull-left">Copyright © Milo</span>
+    </p>
+</main>
+
+<!-- 全局js（保留原有依赖） -->
+<script src="/js/jquery.min.js"></script>
+<script src="/ajax/libs/validate/jquery.validate.min.js"></script>
+<script src="/ajax/libs/layer/layer.min.js"></script>
+<script src="/ajax/libs/blockUI/jquery.blockUI.js"></script>
+<script src="/ruoyi/js/ry-ui.js"></script>
+
+<script>
+    // ===== 粒子连接背景（模板样式） =====
+    var canvas = document.getElementById('net');
+    var ctx = canvas.getContext('2d');
+    var w, h, particles = [];
+
+    function resize() {
+        w = canvas.width = innerWidth;
+        h = canvas.height = innerHeight;
+    }
+    resize();
+    addEventListener('resize', resize);
+
+    var count = Math.min(90, Math.floor(innerWidth / 16));
+    for (var i = 0; i < count; i++) {
+        particles.push({
+            x: Math.random() * w,
+            y: Math.random() * h,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            r: Math.random() * 1.8 + 0.6
+        });
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, w, h);
+        for (var i = 0; i < particles.length; i++) {
+            var p = particles[i];
+            p.x += p.vx; p.y += p.vy;
+            if (p.x < 0 || p.x > w) p.vx *= -1;
+            if (p.y < 0 || p.y > h) p.vy *= -1;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(34,211,238,0.75)';
+            ctx.fill();
+        }
+        for (var i = 0; i < particles.length; i++) {
+            for (var j = i + 1; j < particles.length; j++) {
+                var a = particles[i], b = particles[j];
+                var d = Math.hypot(a.x - b.x, a.y - b.y);
+                if (d < 130) {
+                    ctx.beginPath();
+                    ctx.moveTo(a.x, a.y);
+                    ctx.lineTo(b.x, b.y);
+                    ctx.strokeStyle = 'rgba(139,92,246,' + (0.5 * (1 - d / 130)) + ')';
+                    ctx.lineWidth = 0.6;
+                    ctx.stroke();
+                }
+            }
+        }
+        requestAnimationFrame(draw);
+    }
+    draw();
+
+    // ===== 密码显示/隐藏切换（增强，不影响原功能） =====
+    var eye = document.getElementById('eye');
+    var passInput = document.getElementById('userPwd');
+    eye.addEventListener('click', function () {
+        var show = passInput.type === 'password';
+        passInput.type = show ? 'text' : 'password';
+        eye.textContent = show ? '◎' : '◉';
+    });
+
+    // ===== 验证码刷新函数（原有功能） =====
+    function refreshCaptcha() {
+        var url = "/captchaImage?type=math" + "&s=" + Math.random();
+        document.querySelector('.imgcode').src = url;
+    }
+
+    // ===== 按钮 loading 兼容（原有功能） =====
+    if (!$.fn.button) {
+        $.fn.button = function(action) {
+            if (action === 'loading') {
+                $(this).addClass('loading').prop('disabled', true);
+            } else if (action === 'reset') {
+                $(this).removeClass('loading').prop('disabled', false);
+            }
+            return this;
+        };
+    }
+
+    $(function() {
+        // 点击验证码图片刷新
+        $('.imgcode').click(function(e) {
+            refreshCaptcha();
+        });
+
+        // Enter 键提交
+        $(document).on('keydown', function(e) {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
+
+        // 输入时清空错误
+        $('#userCode, #userPwd, #captcha').on('input focus', function() {
+            $('#loginErrorMsg').text('');
+        });
+    });
+
+    // ===== 登录逻辑（原有功能，未改动） =====
+    function login() {
+        var userPwd = $("#userPwd").val();
+        var userCode = $("#userCode").val();
+        var captcha = $("#captcha").val();
+        var errorMsgEl = $('#loginErrorMsg');
+
+        errorMsgEl.text('');
+
+        if (userCode == '') {
+            errorMsgEl.text('用户名不能为空');
+            return false;
+        }
+        if (userPwd == '') {
+            errorMsgEl.text('密码不能为空');
+            return false;
+        }
+        if (captcha == '') {
+            errorMsgEl.text('验证码不能为空');
+            return false;
+        }
+
+        var btn = $('#btnSubmit');
+        btn.button('loading');
+
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            url: "login_check",
+            data: { userCode: userCode, userPwd: userPwd, captcha: captcha },
+            success: function(da) {
+                if (da.code == web_status.SUCCESS) {
+                    $('#loginErrorMsg').text('登录成功');
+                    setTimeout(function() {
+                        location.href = 'index';
+                    }, 1500);
+                } else {
+                    setTimeout(function () {
+                        btn.button('reset');
+                    }, 1000)
+
+                    setTimeout(function () {
+                        errorMsgEl.text(da.msg || '登录失败，请重试');
+                    }, 1000)
+                    $('#captcha').val('');
+                    $('#userPwd').val('');
+                    refreshCaptcha();
+                }
+            },
+            error: function() {
+                btn.button('reset');
+                errorMsgEl.text('网络异常，请检查连接');
+            }
+        });
+    }
+</script>
+</body>
+</html>

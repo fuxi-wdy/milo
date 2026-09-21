@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.milo.mapper.DataMeterMapper">
+
+	<resultMap type="DataMeter" id="DataMeterResult">
+		<id     property="scId"         column="scId"        />
+		<result property="name"       column="name"      />
+		<result property="sxDate"     column="sxdate"    />
+		<result property="type"       column="type"      />
+		<result property="bsDate"       column="bsdate"      />
+		<result property="fuWuQi"       column="fuwuqi"      />
+		<result property="sign"       column="sign"      />
+		<result property="concat"       column="concat"      />
+		<result property="remark"       column="remark"      />
+		<result property="version"       column="version"      />
+		<result property="boss"       column="boss"      />
+
+	</resultMap>
+
+	<sql id="selectListDataMeterVo" >
+		select scId ,name , sxdate ,type ,bsdate ,fuwuqi ,sign ,concat ,remark,version,boss   from scyf
+	</sql>
+
+
+
+	<!-- 查询列表 -->
+	<select id="selectListDataMeter" parameterType="com.project.milo.entity.DataMeter" resultType="com.project.milo.entity.DataMeter">
+		select scId scId ,name name , sxdate sxDate ,type type ,bsdate bsDate ,fuwuqi fuWuQi ,sign sign ,concat concat ,
+		       remark remark,version version,boss boss  from scyf
+		       <where>
+				<if test="name != null and name != ''">
+					AND name like concat('%', #{name}, '%')
+				</if>
+				<if test="type != null and type != ''">
+					AND type like concat('%', #{type}, '%')
+				</if>
+				<if test="concat != null and concat != ''">
+					AND concat like concat('%', #{concat}, '%')
+				</if>
+			   </where>
+	</select>
+
+	<!-- 统计导出总数（与列表查询同条件） -->
+	<select id="countDataMeter" parameterType="com.project.milo.entity.DataMeter" resultType="long">
+		select count(*) from scyf
+		<where>
+			<if test="name != null and name != ''">
+				AND name like concat('%', #{name}, '%')
+			</if>
+			<if test="type != null and type != ''">
+				AND type like concat('%', #{type}, '%')
+			</if>
+			<if test="concat != null and concat != ''">
+				AND concat like concat('%', #{concat}, '%')
+			</if>
+		</where>
+	</select>
+
+	<!-- 导出分批查询：按主键键集分页（scId &gt; lastId），避免深分页慢查询 -->
+	<select id="selectDataMeterExportPage" resultType="com.project.milo.entity.DataMeter">
+		select scId scId ,name name , sxdate sxDate ,type type ,bsdate bsDate ,fuwuqi fuWuQi ,sign sign ,concat concat ,
+		       remark remark,version version,boss boss  from scyf
+		<where>
+			<if test="cond != null and cond.name != null and cond.name != ''">
+				AND name like concat('%', #{cond.name}, '%')
+			</if>
+			<if test="cond != null and cond.type != null and cond.type != ''">
+				AND type like concat('%', #{cond.type}, '%')
+			</if>
+			<if test="cond != null and cond.concat != null and cond.concat != ''">
+				AND concat like concat('%', #{cond.concat}, '%')
+			</if>
+			<if test="lastId != null">
+				AND scId &gt; #{lastId}
+			</if>
+		</where>
+		order by scId
+		limit #{pageSize}
+	</select>
+
+	<!-- 添加 -->
+	<insert id="insertDataMeter" parameterType="com.project.milo.entity.DataMeter" useGeneratedKeys="true" keyProperty="scId">
+		insert into scyf
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="name != null and name != ''">name,</if>
+			<if test="sxDate != null and sxDate != ''">sxdate,</if>
+			<if test="type != null and type != ''">type,</if>
+			<if test="bsDate != null and bsDate != ''">bsdate,</if>
+			<if test="fuWuQi != null and fuWuQi != ''">fuwuqi,</if>
+			<if test="sign != null and sign != ''">sign,</if>
+			<if test="concat != null and concat != ''">concat,</if>
+			<if test="version != null and version != ''">version,</if>
+			<if test="boss != null and boss != ''">boss,</if>
+			<if test="remark != null and remark != ''">remark</if>
+		</trim>
+		values
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="name != null and name != ''">#{name},</if>
+			<if test="sxDate != null and sxDate != ''">#{sxDate},</if>
+			<if test="type != null and type != ''">#{type},</if>
+			<if test="bsDate != null and bsDate != ''">#{bsDate},</if>
+			<if test="fuWuQi != null and fuWuQi != ''">#{fuWuQi},</if>
+			<if test="sign != null and sign != ''">#{sign},</if>
+			<if test="concat != null and concat != ''">#{concat},</if>
+			<if test="version != null and version != ''">#{version},</if>
+			<if test="boss != null and boss != ''">#{boss},</if>
+			<if test="remark != null and remark != ''">#{remark}</if>
+		</trim>
+	</insert>
+
+
+	<!-- 根据id查询 -->
+	<select id="selectDataMeterById" parameterType="com.project.milo.entity.DataMeter" resultType="com.project.milo.entity.DataMeter">
+		select scId scId ,name name , sxdate sxDate ,type type ,bsdate bsDate ,fuwuqi fuWuQi ,sign sign ,concat concat ,
+		remark remark,version version,boss boss  from scyf where scId=#{scId}
+	</select>
+
+
+
+	<!-- 修改 -->
+	<update id="updateDataMeter" parameterType="com.project.milo.entity.DataMeter">
+		update scyf
+		<set>
+			<if test="name != null and name != ''">name = #{name},</if>
+			<if test="sxDate != null and sxDate != ''">sxdate = #{sxDate},</if>
+			<if test="type != null and type != ''">type = #{type},</if>
+			<if test="bsDate != null and bsDate != ''">bsdate = #{bsDate},</if>
+			<if test="fuWuQi != null and fuWuQi != ''">fuwuqi = #{fuWuQi},</if>
+			<if test="sign != null and sign != ''">sign = #{sign},</if>
+			<if test="concat != null and concat != ''">concat = #{concat},</if>
+			<if test="version != null and version != ''">version = #{version}</if>
+		</set>
+		where scId = #{scId}
+	</update>
+
+	<!-- 删除 -->
+	<delete id="deleteDataMeter" parameterType="com.project.milo.entity.DataMeter">
+		delete from scyf where scId = #{scId}
+	</delete>
+
+
+
+</mapper>

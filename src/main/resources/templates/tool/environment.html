@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<#import "/common/common.html" as common>
+<html lang="zh">
+<head>
+    <@common.commonHead title="环境部署"/>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <!-- ibox-title 固定顶部 -->
+                <!--<div class="ibox-title" id="fixedToolbar">
+                    <button id="edit" class="btn btn-primary btn-xs m-l-sm" onclick="edit()" type="button">编辑</button>
+                    <button id="save" class="btn btn-primary btn-xs" onclick="save()" type="button">保存</button>
+                </div>-->
+                <div class="ibox-content" id="eg">
+
+                    <div class="click2edit wrapper">
+                        <!-- 两列布局容器 -->
+                        <div class="two-column-wrapper">
+                            <!-- 左列 -->
+                            <div class="col-left">
+                                <pre>/etc/sysconfig/iptables</pre>
+                                <pre>-A INPUT -m state --state NEW -m tcp -p tcp --dport 7001 -j ACCEPT</pre>
+                                <pre>-A INPUT -m state --state NEW -m tcp -p tcp --dport 1521 -j ACCEPT</pre>
+
+                                <h3>【CentOS 7 防火墙】</h3>
+                                <h3>禁用端口</h3>
+                                <pre>firewall-cmd --permanent --remove-port=6061/tcp</pre>
+                                <pre>firewall-cmd --permanent --remove-port=6064/tcp</pre>
+                                <h3>开启端口</h3>
+                                <pre>firewall-cmd --permanent --add-port=7001/tcp</pre>
+                                <h3>重启防火墙</h3>
+                                <pre>firewall-cmd --reload</pre>
+                                <h3>------------------离线安装telnet--------</h3>
+                                <pre>rpm -ivh *.rpm（telent、xinetd、telnet-server）</pre>
+
+                                <pre>https://blog.csdn.net/qq_28198181/article/details/88807100</pre>
+
+                                <h3>------------------关闭防火墙------------------------</h3>
+                                <pre>CentOS 6
+chkconfig iptables off
+service iptables stop</pre>
+
+                                <h3>CentOS 7</h3>
+<pre>关闭服务：systemctl stop firewalld
+开机禁用：systemctl disable firewalld</pre>
+
+                                <h3>-----------------【1 卸载】---------------</h3>
+                                <pre>rpm -qa|grep java
+yum -y remove java 名称</pre>
+
+                                <h3>-------------------【2 JDK安装】-------------------------</h3>
+                                <pre>1.解压并安装jdk</pre>
+                                <pre>rpm -ivh jdk-7u79-linux-x64.rpm</pre>
+                                <h3>2.设置环境变量</h3>
+                                <pre>export JAVA_HOME=/usr/java/jdk1.7.0_79
+export PATH=$PATH:$JAVA_HOME/bin:$JAVA_HOME/jre/bin
+export CLASSPATH=.:$JAVA_HOME/lib:$JAVA_HOME/jre/lib:$CLASSPATH
+export _JAVA_OPTIONS=-DBOSSSOFT_HOME=/opt/bosssoft/boss_home</pre>
+                                <h3>----------------------------------</h3>
+
+                                <h3>5.控制台登陆后显示慢</h3>
+                                <h4>修改文件</h4>
+                                <pre>vim /usr/java/jdk1.7.0_79/jre/lib/security/java.security
+securerandom.source=file:/dev/urandom</pre>
+                                <h3>修改为</h3>
+                                <pre>securerandom.source=file:/dev/./urandom</pre>
+                                <h3>-------------------【v3-dubbo】-------------------</h3>
+                                <h4>1. 应用中心(bosssoft.properties)</h4>
+                                <pre>dubbo.registry.address=N/A
+dubbo.protocol.host=172.20.0.151
+dubbo.protocol.port=6061</pre>
+                                <h4>2. 业务端(dubbo.properties)</h4>
+                                <pre>dubbo.registry.address=N/A
+dubbo.protocol.port=6061(直连应用中心的端口，与上面对应)
+dubbo.protocol.host=172.20.0.151(直连应用中心的IP，与上面对应)</pre>
+                                <h3>dubbo缓存所在目录【/root/.dubbo】</h3>
+                                <h3>4 redis安装</h3>
+                                <pre>1.解压 【tar -zxvf redis-3.2.9.tar.gz】
+2.执行make make
+3.报错127 yum install gcc
+4.报错jemalloc make MALLOC=libc
+5.进入src目录，【make install PREFIX=/home/redis-3.2.9】
+6.修改配置文件 vim redis.conf
+7.#requirepass foobared 》【requirepass redis@123】
+8.daemonize no 》【daemonize yes】
+9.bing 127.0.0.1 》前面加注释 #
+10.protected-mode yes 》【protected-mode no】
+11.设置maxmemory 2147483648
+12.timeout 300000
+13.tcp-keepalive 300</pre>
+
+                                <h3>关闭持久化</h3>
+                                <pre>注释 #save 900 1
+注释 #save 300 10
+注释 #save 60 10000
+设置 save ""</pre>
+
+                                <h3>注释redis快照</h3>
+                                <pre>把dump.rdb 改名 dmp.rdb_bak</pre>
+                                <pre>修改logfile /home/redis-3.2.9/logs/logfiles.log【自行建立文件夹logs、建立空文件logfiles.log】</pre>
+                            </div>
+
+                            <!-- 右列 -->
+                            <div class="col-right">
+                                <pre>1.执行 【java -jar wls1036_generic.jar】然后一直下一步
+2.选择Getting started with WebLogic
+3.密码输入：weblogic/Webl0giC@123,然后一直下一步
+4.选择生产模式
+在base_domain目录下创建【mkdir -p servers】
+在base_domain/servers目录下创建【mkdir -p AdminServer】
+在base_domain/servers/AdminServer目录下创建【mkdir -p security】
+5.创建【vim boot.properties】
+password=Webl0giC@123
+username=weblogic</pre>
+                                <h3>静默安装</h3>
+                                <pre><a href="https://www.cnblogs.com/zhguo/p/8540160.html">https://www.cnblogs.com/zhguo/p/8540160.html</a></pre>
+                                <pre><a href="https://jingyan.baidu.com/article/0202781160c2961bcc9ce5e8.html">https://jingyan.baidu.com/article/0202781160c2961bcc9ce5e8.html</a></pre>
+                                <h3>版本查询</h3>
+                                <pre>cd /opt/oracle/middleware/wlserver_10.3/server/bin
+source ./setWLSEnv.sh
+java weblogic.version</pre>
+                                <h3>生成补丁目录</h3>
+                                <pre>cd /home/middleware/utils/bsu</pre>
+                                <pre>如果有使用过bsu.sh，则会有cache_dir目录，否则请新建或执行bsu.sh生成。</pre>
+                                <pre>如果执行bsu.sh一直没有显示检查冲突或有提示内存溢出，尝试以下操作</pre>
+                                <pre>vim  /home/middleware/utils/bsu/bsu.sh</pre>
+                                <pre>MEM_ARGS="-Xms4096m -Xmx4096m"  #内存增加一些，不行再增大</pre>
+                                <h3>补丁升级</h3>
+                                <p>【新】</p>
+                                <pre>升级工具  【https://wwi.lanzoui.com/iPH1pq8mife】</pre>
+                                <pre>1.解压到bsu目录</pre>
+                                <pre>2.执行授权【chmod a+x bsu_update.sh】【chmod a+x weblogic_patch_20210422】</pre>
+                                <pre>3.安装升级【./bsu_update.sh install】</pre>
+                                <h3>----------------------------补丁升级【旧】----------------------------</h3>
+                                <pre>在bsu目录下运行【关闭weblogic进程】</pre>
+                                <pre>./bsu.sh -install -patch_download_dir=/home/middleware/utils/bsu/cache_dir/ -patchlist=7HKN -prod_dir=/home/middleware/wlserver_10.3/</pre>
+
+                                <h3>补丁查询</h3>
+                                <pre>./bsu.sh -prod_dir=/home/middleware/wlserver_10.3/ -status=applied -verbose -view</pre>
+
+                                <h3>补丁卸载（下次打补丁的时候需要卸载）</h3>
+                                <pre>./bsu.sh -remove -patchlist=JWEB -prod_dir=/home/middleware/wlserver_10.3 -verbose</pre>
+                                <h3>---------------------------【weblogic删除域】----------------------------</h3>
+                                <pre><a href="https://blog.csdn.net/Miss_Black/article/details/78922142">https://blog.csdn.net/Miss_Black/article/details/78922142</a></pre>
+
+                                <h3>-------------------------【weblogic关闭控制台】--------------------------</h3>
+                                <h3>关闭控制台页面 /console（可选加固）</h3>
+                                方式1：
+                                <pre>发war包完成后，在控制台上点击左边的锁定并编辑，然后点击右边的 "域"，点击"高级"，
+在展开的内容下有个 启用控制台，取消此项的勾选，保存后点击激活更改，然后重启weblogic，
+这样就完全不能使用console了。需要恢复console的访问时，打开 config.xml ，找到 <console-enabled>false</console-enabled> 改为
+ <console-enabled>true</console-enabled>或者删除此行，再重启weblogic，就可以恢复console的访问。</pre>
+
+                                方式2：
+                                <pre>将"console"改名。 在控制台上点击左边的锁定并编辑，然后点击右边的 "域"，点击"高级"，
+在展开的内容下有个"控制台上下文路径"。把它的"console"为其它名字，保存后点击激活更改，然后重启weblogic。</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<@common.commonScripts />
+<script>
+    $(document).ready(function () {
+        $('.summernote').summernote({
+            lang: 'zh-CN'
+        });
+
+        // ===== 滚动时给固定栏添加阴影效果 =====
+        var $toolbar = $('.ibox-title');
+        var $window = $(window);
+        var offsetTop = $toolbar.offset().top;
+
+        $window.on('scroll', function() {
+            var scrollTop = $window.scrollTop();
+            if (scrollTop > offsetTop) {
+                $toolbar.addClass('scrolled');
+            } else {
+                $toolbar.removeClass('scrolled');
+            }
+        });
+
+        // ===== 窗口resize时重新计算偏移量 =====
+        $window.on('resize', function() {
+            offsetTop = $toolbar.offset().top;
+        });
+    });
+
+    var edit = function () {
+        $("#eg").addClass("no-padding");
+        $('.click2edit').summernote({
+            lang: 'zh-CN',
+            focus: true
+        });
+        // 编辑模式下，确保工具栏固定
+        setTimeout(function() {
+            $('.note-toolbar').css({
+                'position': 'sticky',
+                'top': '0',
+                'z-index': '1001',
+                'background': '#f7f9fa',
+                'border-bottom': '2px solid #e7eaec',
+                'box-shadow': '0 2px 8px rgba(0,0,0,0.08)'
+            });
+        }, 100);
+    };
+
+    var save = function () {
+        $("#eg").removeClass("no-padding");
+        var aHTML = $('.click2edit').summernote('code');
+        $('.click2edit').summernote('destroy');
+    };
+</script>
+</body>
+</html>

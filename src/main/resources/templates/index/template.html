@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>模板管理</title>
+    <link href="/milo/css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="/milo/js/bootstrap.js"></script>
+    <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="/ajax/libs/layer/layer.min.js"></script>
+
+</head>
+<body>
+<div class="container mt-4">
+    <h3 class="mb-3">模板管理</h3>
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+        <tr style="text-align: center; line-height: 30px;">
+            <th scope="col" style="width: 10%;">模板序号</th>
+            <th scope="col" style="width: 20%;">模板名称</th>
+            <th scope="col" style="width: 35%;">模板上传</th>
+            <th scope="col" style="width: 35%;">模板下载</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr style="text-align: center; line-height: 30px;">
+            <th scope="row">1</th>
+            <td>运维报告</td>
+            <td>
+                <input type="file" id="uploadOps" accept=".doc,.docx,.xls,.xlsx" style="display:none;">
+                <button class="btn btn-success" type="button" onclick="uploadTemplate('运维报告', 'uploadOps')">
+                    <i class="fa fa-upload"></i>&nbsp;&nbsp;<span class="bold">上传运维报告</span>
+                </button>
+            </td>
+            <td>
+                <button class="btn btn-danger" type="button" onclick="downloadTemplate('运维报告', this)">
+                    <i class="fa fa-download"></i>&nbsp;&nbsp;<span class="bold">运维报告下载</span>
+                </button>
+            </td>
+        </tr>
+        <tr style="text-align: center; line-height: 30px;">
+            <th scope="row">2</th>
+            <td>巡检报告</td>
+            <td>
+                <input type="file" id="uploadInspect" accept=".doc,.docx,.xls,.xlsx" style="display:none;">
+                <button class="btn btn-success" type="button" onclick="uploadTemplate('巡检报告', 'uploadInspect')">
+                    <i class="fa fa-upload"></i>&nbsp;&nbsp;<span class="bold">上传巡检报告</span>
+                </button>
+            </td>
+            <td>
+                <button class="btn btn-danger" type="button" onclick="downloadTemplate('巡检报告', this)">
+                    <i class="fa fa-download"></i>&nbsp;&nbsp;<span class="bold">巡检报告下载</span>
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    /**
+     * 上传模板文件（优化版）
+     */
+    function uploadTemplate(templateName, fileInputId) {
+        $('#' + fileInputId).click();
+
+        $('#' + fileInputId).off('change').on('change', function() {
+            var file = this.files[0];
+            if (!file) {
+                return;
+            }
+
+            // 验证文件类型
+            var validTypes = ['.doc', '.docx', '.xls', '.xlsx'];
+            var fileName = file.name;
+            var fileExt = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+            if (!validTypes.includes(fileExt)) {
+                //alert('请上传Word或Excel文档！支持格式：.doc, .docx, .xls, .xlsx');
+                layer.msg('请上传Word或Excel文档！支持格式：.doc, .docx, .xls, .xlsx', {icon: 5});
+                $(this).val('');
+                return;
+            }
+
+            // 显示上传进度
+            var uploadBtn = $(this).closest('tr').find('.btn-success');
+            var originalText = uploadBtn.html();
+            uploadBtn.html('<i class="fa fa-spinner fa-spin"></i>&nbsp;&nbsp;上传中...');
+            uploadBtn.prop('disabled', true);
+
+            // 构建FormData
+            var formData = new FormData();
+            formData.append('file', file);
+            formData.append('templateName', templateName);
+
+            // 发起上传请求
+            $.ajax({
+                url: '/api/upload',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json', // 明确指定期望JSON响应
+                success: function(response) {
+                    if (response.code == 0) {
+                        layer.msg(templateName+response.msg, {icon: 6});
+
+                    }else {
+                        layer.msg(templateName+response.msg, {icon: 5});
+
+                    }
+
+                },
+                error: function(xhr, status, error) {
+
+                    // 尝试解析错误响应
+                    var errorMsg = '上传失败：';
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+                        errorMsg += response.msg || error;
+                    } catch (e) {
+                        errorMsg += error || xhr.statusText;
+                    }
+                    alert(errorMsg);
+                },
+                complete: function() {
+                    uploadBtn.html(originalText);
+                    uploadBtn.prop('disabled', false);
+                    $('#' + fileInputId).val('');
+                }
+            });
+        });
+    }
+
+
+    /**
+     * 下载模板文件*
+     * @param templateName
+     * @param btn
+     */
+    function downloadTemplate(templateName, btn) {
+        var downloadBtn = $(btn);
+        var originalText = downloadBtn.html();
+        downloadBtn.html('<i class="fa fa-spinner fa-spin"></i>&nbsp;&nbsp;下载中...');
+        downloadBtn.prop('disabled', true);
+
+        var downloadUrl = '/api/download?templateName=' + encodeURIComponent(templateName);
+
+        $.ajax({
+            url: downloadUrl,
+            type: 'GET',
+            xhrFields: {
+                responseType: 'blob'  // 设置响应类型为blob
+            },
+            success: function(data, status, xhr) {
+                console.log('Download success:', data, status);
+                // 获取文件名
+                var disposition = xhr.getResponseHeader('Content-Disposition');
+                var fileName = '';
+                if (disposition) {
+                    // 从Content-Disposition中提取文件名
+                    var match = disposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                    if (match && match[1]) {
+                        fileName = decodeURIComponent(match[1].replace(/['"]/g, ''));
+                    }
+                }
+                if (!fileName) {
+                    fileName = templateName + '.docx'; // 默认文件名
+                }
+
+                // 创建下载链接
+                var link = document.createElement('a');
+                var url = window.URL.createObjectURL(data);
+                link.href = url;
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+
+                layer.msg(templateName+'下载成功', {icon: 6});
+            },
+            error: function(xhr, status) {
+                if (xhr.status === 404){
+                    layer.msg('没有'+templateName+'模板，请先上传', {icon: 5});
+                }
+
+            },
+            complete: function() {
+                downloadBtn.html(originalText);
+                downloadBtn.prop('disabled', false);
+            }
+        });
+    }
+
+    // 辅助函数：显示成功消息
+    function showSuccess(message) {
+        if (typeof toastr !== 'undefined') {
+            toastr.success(message);
+        } else {
+            alert(message);
+        }
+    }
+
+    // 辅助函数：显示错误消息
+    function showError(message) {
+        if (typeof toastr !== 'undefined') {
+            toastr.error(message);
+        } else {
+            alert(message);
+        }
+    }
+
+
+
+
+
+
+
+</script>
+</body>
+</html>

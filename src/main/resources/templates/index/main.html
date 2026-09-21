@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html  lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--360浏览器优先以webkit内核解析-->
+    <title>若依介绍</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="/css/bootstrap.min.css"  rel="stylesheet"/>
+    <link href="/css/font-awesome.min.css"  rel="stylesheet"/>
+    <link href="/css/style.min.css"  rel="stylesheet"/>
+</head>
+
+<body class="gray-bg">
+<script src="/js/jquery.min.js"></script>
+
+
+<div class="row">
+	<#if recordList?? && recordList?size gt 0>
+	<#list recordList as group>
+	<div class="col-sm-4" style="width: 400px;height: 350px" >
+		<div class="ibox">
+			<div class="ibox-title">
+                        <span class="label label-primary pull-right">
+                            <i class="fa fa-building-o"></i> ${group.count!0}
+                        </span>
+				<h5>
+					<i class="fa fa-folder-open"></i>
+					${group.name!'未命名分组'}
+				</h5>
+			</div>
+			<div class="ibox-content">
+				<h4>单位列表</h4>
+				<div class="row m-t-sm">
+					<div class="col-sm-12">
+						<#if group.ordList?? && group.ordList?size gt 0>
+						<div style="max-height:300px; overflow-y:auto; border:1px solid #e5e5e5; border-radius:4px; padding:5px;">
+							<#list group.ordList as item>
+							<div style="padding:6px 8px; border-bottom:1px solid #f0f0f0; display:flex; align-items:center;">
+								<i class="fa fa-cube text-muted" style="margin-right:8px;"></i>
+								<span>${item.name!'未知单位'} (${item.days!}天)</span>
+							</div>
+						</#list>
+					</div>
+					<#else>
+					<div class="text-muted text-center" style="padding:20px 0;">
+						<i class="fa fa-inbox"></i> 暂无单位
+					</div>
+				</#if>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+<#if (group_index + 1) % 3 == 0 && group_has_next>
+</div>
+<div class="row">
+</#if>
+</#list>
+<#else>
+<div class="col-sm-12">
+	<div class="alert alert-info">
+		<i class="fa fa-info-circle"></i> 暂无数据
+	</div>
+</div>
+</#if>
+</div>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/ajax/libs/layer/layer.min.js"></script>
+</body>
+</html>

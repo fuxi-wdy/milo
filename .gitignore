@@ -1,0 +1,40 @@
+# Java 编译输出
+target/
+!src/main/resources
+!src/test/resources
+
+# IDEA
+.idea/
+*.iml
+out/
+*.iws
+*.ipr
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# 日志文件
+logs/
+*.log
+*.log.*
+
+# 本地环境配置（重点！不要提交数据库密码）
+application-local.yml
+application-dev.yml
+application-prod.yml
+
+# 打包产物
+*.jar
+*.war
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# maven
+.mvn/wrapper/maven-wrapper.jar
+
+# node（前端项目才需要，纯后端可以删掉）
+node_modules/
